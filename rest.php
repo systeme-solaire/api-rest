@@ -1,4 +1,5 @@
 <?php
+define("LOADED_AS_MODULE","1");
 $GLOBALS['object']='bodies';
 $GLOBALS['DEBUG']=0;
 $GLOBALS['VirtualHost']="api";
