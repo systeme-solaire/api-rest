@@ -1,4 +1,7 @@
 <?php
+if (!defined("LOADED_AS_MODULE")) {
+    die ("Vous n'&ecirc;tes pas autoris&eacute; &agrave; acc&eacute;der directement &agrave; cette page...");
+}
 function swagger() {
     header('Content-Type: application/json; charset=utf-8');
     echo '{"swagger":"2.0",';

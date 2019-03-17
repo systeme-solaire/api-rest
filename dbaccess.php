@@ -1,4 +1,7 @@
 <?php
+if (!defined("LOADED_AS_MODULE")) {
+    die ("Vous n'&ecirc;tes pas autoris&eacute; &agrave; acc&eacute;der directement &agrave; cette page...");
+}
 class DBAccess{
     public static function ConfigInit() {
         /* ********************    CONNECTION A LA BASE    ******************** */
