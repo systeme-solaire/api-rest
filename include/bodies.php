@@ -6,7 +6,7 @@ class Bodies implements JsonSerializable{
     private $excludeColumn;
     private $limitToColumn;
 
-    const FIELDS = "CPT_CORPS, NOM, BL_PLANETE, DEMIGRAND_AXE, CPTE_CORPS, NOM_ANGLAIS, EXCENTRICITE, DECOUV_QUI, DECOUV_QD, DES_TEMPO";
+    const FIELDS = "CPT_CORPS, NOM, BL_PLANETE, DEMIGRAND_AXE, CPTE_CORPS, NOM_ANGLAIS, EXCENTRICITE, DECOUV_QUI, DECOUV_QD, DES_TEMPO, masse_val, masse_unit";
     const TABLE = "syssol_tab_donnees";
 
     protected $isExists;
@@ -20,6 +20,8 @@ class Bodies implements JsonSerializable{
     protected $discoveredBy;
     protected $discoveryDate;
     protected $alternativeName;
+    protected $massVal;
+    protected $massExponent;
 
     public function isExists(){
         return $this->isExists;
@@ -58,6 +60,12 @@ class Bodies implements JsonSerializable{
     public function getAlternativeName(){
         return $this->alternativeName;
     }
+    public function getMassVal(){
+        return $this->massVal;
+    }
+    public function getMassExponent(){
+        return $this->massExponent;
+    }
 
     public function __construct($id, $limitToColumn, $excludeColumn){
         DBAccess::ConfigInit();
@@ -94,6 +102,8 @@ class Bodies implements JsonSerializable{
             $this->discoveredBy = $donnees["DECOUV_QUI"];
             $this->discoveryDate = $donnees["DECOUV_QD"];
             $this->alternativeName = $donnees["DES_TEMPO"];
+            $this->massVal = $donnees["masse_val"];
+            $this->massExponent = $donnees["masse_unit"];
         }
         $result->closeCursor();
 
@@ -121,7 +131,7 @@ class Bodies implements JsonSerializable{
                     case "discoveredBy":        $result+=array('discoveredBy' => $this->getDiscoveredBy()); break;
                     case "discoveryDate":       $result+=array('discoveryDate' => $this->getDiscoveryDate()); break;
                     case "alternativeName":     $result+=array('alternativeName' => $this->getAlternativeName()); break;
-
+                    case "mass":                $result+=array('mass' => ($this->getMasseVal()<>0?array('massValue' => $this->getMasseVal(), 'massExponent' => $this->getMasseUnit()):null));break;
                 }
                 $j++;
             }
@@ -254,6 +264,27 @@ class Bodies implements JsonSerializable{
                             $result .= 'null';
                         }
                         break;
+                    case 'mass':
+                        if ($row["masse_val"]!=0){
+                            // il a une masse
+                            if (!$brutData) {
+                                $result .= '{';
+                                $result .= '"masseValue":' . $row["masse_val"];
+                                $result .= ',';
+                                $result .= '"massExponent":' . $row["masse_unit"] ;
+                                $result .= '}';
+                            }else{
+                                $result .= '[';
+                                $result .= $row["masse_val"];
+                                $result .= ',';
+                                $result .= $row["masse_unit"];
+                                $result .= ']';
+                            }
+                        }else{
+                            // ce n'est pas un satellite
+                            $result .= 'null';
+                        }
+                        break;
                     case "moons":
                         if ($row["BL_PLANETE"] != 0){
                             $result .= Bodies::getSatellite($row["CPT_CORPS"], $brutData, $isRelPresent, $isMoonPresent);
@@ -314,11 +345,11 @@ class Bodies implements JsonSerializable{
         $descColumns[]=new Column("moons", "", "");
         $descColumns[]=new Column("semimajorAxis", "DEMIGRAND_AXE", "number");
         $descColumns[]=new Column("orbitalExcentricity", "EXCENTRICITE", "number");
+        $descColumns[]=new Column("mass", "", "");
         $descColumns[]=new Column("aroundPlanet", "CPTE_CORPS", "string");
         $descColumns[]=new Column("discoveredBy", "DECOUV_QUI", "string");
         $descColumns[]=new Column("discoveryDate", "DECOUV_QD", "string");
         $descColumns[]=new Column("alternativeName", "DES_TEMPO", "string");
-
         return $descColumns ;
     }
 
@@ -332,6 +363,9 @@ class Bodies implements JsonSerializable{
                     break;
                 case 'moons':
                     echo '"moons":{"type":"array", "items":{"type":"object", "properties": {"moon" :{"type":"string"}, "rel" :{"type":"string"}}}}';
+                    break;
+                case 'mass':
+                    echo '"mass":{"type":"object", "properties":{ "massValue" :{"type":"number"}, "massExponent" :{"type":"integer"}}}';
                     break;
                 default :
                     echo '"' . $col->getColId() . '": {"type": "' . $col->getColType() . '"}';

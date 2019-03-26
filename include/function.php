@@ -240,6 +240,17 @@ function readCommand($parameters) {
                     case "orbitalExcentricity":
                         $result .= '"orbitalExcentricity":' . ($object->getOrbitalExcentricity() != 0 ? $object->getOrbitalExcentricity() : 0) . '';
                         break;
+                    case "mass":
+                        $result .= '"mass":';
+                        if ($object->getMassVal() <> 0) {
+                            $result .= '{';
+                            $result .= '"massValue":' . $object->getMassVal() . ',';
+                            $result .= '"massExponent":' . $object->getmassExponent();
+                            $result .= '}';
+                        } else {
+                            $result .= 'null';
+                        }
+                    break;
                     case "aroundPlanet":
                             $result .= '"aroundPlanet":';
                             if ($object->getAroundPlanet() <> "") {
@@ -265,7 +276,6 @@ function readCommand($parameters) {
                     case "alternativeName":
                         $result .= '"alternativeName":"' . $object->getAlternativeName() . '"';
                         break;
-                    
                 }
                 $j++;
                 if ($j < count($allColumns)) {
