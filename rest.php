@@ -10,11 +10,11 @@ if ($_SERVER['HTTP_HOST']==$GLOBALS['VirtualHost']){
     $GLOBALS['API_URL']='https://'.$_SERVER['HTTP_HOST'].'/rest/'.$GLOBALS['object'];
 }
 
-include_once('column.php');
-include_once('dbaccess.php');
-include_once('bodies.php');
-include_once('swagger.php');
-include_once('function.php');
+include_once('include/column.php');
+include_once('include/dbaccess.php');
+include_once('include/bodies.php');
+include_once('include/swagger.php');
+include_once('include/function.php');
 
 $request = isset($request)?$request:null;
 $get = isset($get)?$get:null;
