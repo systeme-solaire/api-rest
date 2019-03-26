@@ -8,7 +8,7 @@ function swagger() {
     echo '"info":{';
     echo '"title":"Solar System openData",';
     echo '"description":"API to get all datas about all solar system objects",';
-    echo '"version":"1.1.0"';
+    echo '"version":"'.$GLOBALS['API_VERSION'].'"';
     echo '},'; //info
     echo '"host":"' . $_SERVER['HTTP_HOST'] . '",';
     echo '"basePath":"' . $_SERVER['SCRIPT_NAME'] . '",';
