@@ -131,6 +131,8 @@ function listCommand($parameters) //, $transform, $exclude, $ordering)
     $isRelPresent=isFilterPresent('rel', $datas, $exclude);
     $isPlanetPresent=isFilterPresent('planet', $datas, $exclude);
     $isMoonPresent=isFilterPresent('moon', $datas, $exclude);
+    $isMassValuePresent=isFilterPresent('massValue', $datas, $exclude);
+    $isMassExpPresent=isFilterPresent('massExponent', $datas, $exclude);
 
     echo '{"' . $GLOBALS['object'] . '":';
     if ($brutData){
@@ -183,7 +185,7 @@ function listCommand($parameters) //, $transform, $exclude, $ordering)
     }
 
     echo '[';
-    echo Bodies::getAll($allColumns, $brutData, $orderings, $page, $filters, $isRelPresent, $isPlanetPresent, $isMoonPresent);
+    echo Bodies::getAll($allColumns, $brutData, $orderings, $page, $filters, $isRelPresent, $isPlanetPresent, $isMoonPresent, $isMassValuePresent, $isMassExpPresent);
     echo ']';
     if ($brutData){ echo '}';}
     echo '}';//fin
@@ -203,90 +205,21 @@ function readCommand($parameters) {
     $isRelPresent=isFilterPresent('rel',$datas, $exclude);
     $isPlanetPresent=isFilterPresent('planet', $datas, $exclude);
     $isMoonPresent=isFilterPresent('moon', $datas, $exclude);
+    $isMassValuePresent=isFilterPresent('massValue', $datas, $exclude);
+    $isMassExpPresent=isFilterPresent('massExponent', $datas, $exclude);
 
     $object = new Bodies($key, $datas, $exclude);
     if (!$object->isExists()) {
         //existe pas mais la VF existe
         if ($object->isEnglish()) {
+            //redirect vers VF
             exitWith301($object->getId());
         }
         // n'existe vraiment pas
         exitWith404('entity');
     }else {
         startOutput();
-        $result='{';
-        if ($object->getId()!==null) {
-            $j=0; // pour les colonnes
-            foreach ($allColumns as $column) {
-                switch ($column->getColId()) {
-                    case "id":
-                        $result .= '"id":"' . $object->getId() . '"';
-                        break;
-                    case "name":
-                        $result .= '"name":"' . $object->getName() . '"';
-                        break;
-                    case "englishName":
-                        $result .= '"englishName":"' . $object->getEnglishName() . '"';
-                        break;
-                    case "isPlanet":
-                        $result .= '"isPlanet":' . ($object->getIsPlanet() == 0 ? 'false' : 'true') . '';
-                        break;
-                    case "moons":
-                        $result .= '"moons":'.Bodies::getSatellite($object->getId(), false, $isRelPresent, $isMoonPresent);
-                        break;
-                    case "semimajorAxis":
-                        $result .= '"semimajorAxis":' . ($object->getSemimajorAxis() != 0 ? $object->getSemimajorAxis() : 0) . '';
-                        break;
-                    case "orbitalExcentricity":
-                        $result .= '"orbitalExcentricity":' . ($object->getOrbitalExcentricity() != 0 ? $object->getOrbitalExcentricity() : 0) . '';
-                        break;
-                    case "mass":
-                        $result .= '"mass":';
-                        if ($object->getMassVal() <> 0) {
-                            $result .= '{';
-                            $result .= '"massValue":' . $object->getMassVal() . ',';
-                            $result .= '"massExponent":' . $object->getmassExponent();
-                            $result .= '}';
-                        } else {
-                            $result .= 'null';
-                        }
-                    break;
-                    case "aroundPlanet":
-                            $result .= '"aroundPlanet":';
-                            if ($object->getAroundPlanet() <> "") {
-                                $result .= '{';
-                                if ($isPlanetPresent) {
-                                    $result .= '"planet":"' . $object->getAroundPlanet() . '"';
-                                }
-                                if ($isRelPresent) {
-                                    if ($isPlanetPresent) $result .= ', ';
-                                    $result .= '"rel":"' . $GLOBALS['API_URL'] . '/' . $object->getAroundPlanet() . '"';
-                                }
-                                $result .= '}';
-                            } else {
-                                $result .= 'null';
-                            }
-                        break;
-                    case "discoveredBy":
-                        $result .= '"discoveredBy":"' . $object->getDiscoveredBy() . '"';
-                        break;
-                    case "discoveryDate":
-                        $result .= '"discoveryDate":"' . $object->getDiscoveryDate() . '"';
-                        break;
-                    case "alternativeName":
-                        $result .= '"alternativeName":"' . $object->getAlternativeName() . '"';
-                        break;
-                }
-                $j++;
-                if ($j < count($allColumns)) {
-                    $result .= ',';
-                }
-            }
-        }else{
-            $result = null;
-        }
-        $result.='}';
-        echo $result;
+        echo Bodies::getOne($object, $allColumns, $isRelPresent, $isMoonPresent, $isPlanetPresent, $isMassValuePresent, $isMassExpPresent);
     }
     return false;
 }

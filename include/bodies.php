@@ -190,7 +190,87 @@ class Bodies implements JsonSerializable{
         return $result;
     }
 
-    public static function getAll($allColumns, $brutData, $orderings, $page, $filters, $isRelPresent, $isPlanetPresent, $isMoonPresent){
+    public static function getOne($object, $allColumns, $isRelPresent, $isMoonPresent, $isPlanetPresent, $isMassValuePresent, $isMassExpPresent){
+        $result='{';
+        if ($object->getId()!==null) {
+            $j=0; // pour les colonnes
+            foreach ($allColumns as $column) {
+                switch ($column->getColId()) {
+                    case "id":
+                        $result .= '"id":"' . $object->getId() . '"';
+                        break;
+                    case "name":
+                        $result .= '"name":"' . $object->getName() . '"';
+                        break;
+                    case "englishName":
+                        $result .= '"englishName":"' . $object->getEnglishName() . '"';
+                        break;
+                    case "isPlanet":
+                        $result .= '"isPlanet":' . ($object->getIsPlanet() == 0 ? 'false' : 'true') . '';
+                        break;
+                    case "moons":
+                        $result .= '"moons":'.Bodies::getSatellite($object->getId(), false, $isRelPresent, $isMoonPresent);
+                        break;
+                    case "semimajorAxis":
+                        $result .= '"semimajorAxis":' . ($object->getSemimajorAxis() != 0 ? $object->getSemimajorAxis() : 0) . '';
+                        break;
+                    case "orbitalExcentricity":
+                        $result .= '"orbitalExcentricity":' . ($object->getOrbitalExcentricity() != 0 ? $object->getOrbitalExcentricity() : 0) . '';
+                        break;
+                    case "mass":
+                        $result .= '"mass":';
+                        if ($object->getMassVal() <> 0) {
+                            $result .= '{';
+                            if ($isMassValuePresent) {
+                                $result .= '"massValue":' . $object->getMassVal() ;
+                            }
+                            if ($isMassExpPresent) {
+                                if ($isMassValuePresent) $result .= ', ';
+                                $result .= '"massExponent":' . $object->getmassExponent();
+                            }
+                            $result .= '}';
+                        } else {
+                            $result .= 'null';
+                        }
+                    break;
+                    case "aroundPlanet":
+                            $result .= '"aroundPlanet":';
+                            if ($object->getAroundPlanet() <> "") {
+                                $result .= '{';
+                                if ($isPlanetPresent) {
+                                    $result .= '"planet":"' . $object->getAroundPlanet() . '"';
+                                }
+                                if ($isRelPresent) {
+                                    if ($isPlanetPresent) $result .= ', ';
+                                    $result .= '"rel":"' . $GLOBALS['API_URL'] . '/' . $object->getAroundPlanet() . '"';
+                                }
+                                $result .= '}';
+                            } else {
+                                $result .= 'null';
+                            }
+                        break;
+                    case "discoveredBy":
+                        $result .= '"discoveredBy":"' . $object->getDiscoveredBy() . '"';
+                        break;
+                    case "discoveryDate":
+                        $result .= '"discoveryDate":"' . $object->getDiscoveryDate() . '"';
+                        break;
+                    case "alternativeName":
+                        $result .= '"alternativeName":"' . $object->getAlternativeName() . '"';
+                        break;
+                }
+                $j++;
+                if ($j < count($allColumns)) {
+                    $result .= ',';
+                }
+            }
+        }else{
+            $result = null;
+        }
+        $result.='}';
+        return $result;
+    }
+    public static function getAll($allColumns, $brutData, $orderings, $page, $filters, $isRelPresent, $isPlanetPresent, $isMoonPresent, $isMassValuePresent, $isMassExpPresent){
         DBAccess::ConfigInit();
         $scriptsql = "SELECT ".self::FIELDS." FROM ".self::TABLE."";
 
@@ -269,15 +349,23 @@ class Bodies implements JsonSerializable{
                             // il a une masse
                             if (!$brutData) {
                                 $result .= '{';
-                                $result .= '"masseValue":' . $row["masse_val"];
-                                $result .= ',';
-                                $result .= '"massExponent":' . $row["masse_unit"] ;
+                                if ($isMassValuePresent) {
+                                    $result .= '"masseValue":' . $row["masse_val"];
+                                }
+                                if ($isMassExpPresent) {
+                                    if ($isMassValuePresent) $result .= ',';
+                                    $result .= '"massExponent":' . $row["masse_unit"] ;
+                                }
                                 $result .= '}';
                             }else{
                                 $result .= '[';
-                                $result .= $row["masse_val"];
-                                $result .= ',';
-                                $result .= $row["masse_unit"];
+                                if ($isMassValuePresent) {
+                                    $result .= $row["masse_val"];
+                                }
+                                if ($isMassExpPresent) {
+                                    if ($isMassValuePresent) $result .= ',';
+                                    $result .= $row["masse_unit"];
+                                }
                                 $result .= ']';
                             }
                         }else{
