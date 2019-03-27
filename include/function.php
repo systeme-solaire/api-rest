@@ -31,13 +31,6 @@ function echoParameters(){
     echo '"required":false,';
     echo '"type":"string"';
     echo '},';
-    /*  echo '{';
-      echo '"name":"include",';
-      echo '"in":"query",';
-      echo '"description":"One or more related entities (comma separated).",';
-      echo '"required":false,';
-      echo '"type":"string"';
-      echo '},';*/
     echo '{';
     echo '"name":"order",';
     echo '"in":"query",';
@@ -77,7 +70,7 @@ function echoParameters(){
     echo '"type":"string",';
     echo '"enum":["any"]';
     echo '}';
-    echo ']'; // parameter
+    echo ']'; 
 }
 
 function allowOrigin($allowOrigins) {
@@ -102,10 +95,6 @@ function executeCommand($settings, $request, $method, $get) {
         switch($parameters['action']){
             case 'list': $output = listCommand($parameters); break;
             case 'read': $output = readCommand($parameters); break;
-            //       case 'create': $output = $this->createCommand($parameters); break;
-            //       case 'update': $output = $this->updateCommand($parameters); break;
-            //       case 'delete': $output = $this->deleteCommand($parameters); break;
-            //       case 'increment': $output = $this->incrementCommand($parameters); break;
             case 'headers': $output = headersCommand(); break;
             default: $output = false;
         }
@@ -116,7 +105,7 @@ function executeCommand($settings, $request, $method, $get) {
     }
 }
 
-function listCommand($parameters) //, $transform, $exclude, $ordering)
+function listCommand($parameters)
 {
     extract($parameters);
 
@@ -164,6 +153,17 @@ function listCommand($parameters) //, $transform, $exclude, $ordering)
                         if ($isRelPresent) {
                             if ($isPlanetPresent) $columnString .= ',';
                             $columnString .= '"rel"';
+                        }
+                        $columnString .= ']}';
+                        break;
+                    case 'mass':
+                        $columnString .= '{"' . $column->getColId() . '":[';
+                        if ($isMassValuePresent) {
+                            $columnString .= '"massValue"';
+                        }
+                        if ($isMassExpPresent) {
+                            if ($isMassValuePresent) $columnString .= ',';
+                            $columnString .= '"massExponent"';
                         }
                         $columnString .= ']}';
                         break;
@@ -339,8 +339,6 @@ function headersCommand() {
 
 function processOrderingsParameter($orderings) {
     if (!$orderings) return false;
-  //  foreach ($orderings as &$order) {
-  //      $order = explode(",",$orderings,2);
 
     foreach ($orderings as  $order) {
         $order = explode(",",$order);
@@ -420,8 +418,6 @@ function addFilter(&$filters,$table,$and,$field,$comparator,$value) {
 }
 
 function convertFilter($field, $comparator, $value) {
-  //  $result = convertFilter($field,$comparator,$value);
-  //  if ($result) return $result;
     // default behavior
     $comparator = strtolower($comparator);
     if ($comparator[0]!='n') {
@@ -439,19 +435,10 @@ function convertFilter($field, $comparator, $value) {
                     $v = explode(',',$value);
                     if (count($v)<2) return false;
                     return array('? BETWEEN ? AND ?',$field,$v[0],$v[1]);
-       //         case 'in': return array('? IN ?',$field,explode(',',$value));
-//                case 'is': return array('? IS NULL',$field);
             }
         }
     } else {
-      /*  if (strlen($comparator)==2) {
-            switch ($comparator) {
-                case 'ne': return convertFilter($field, 'neq', $value); // deprecated
-                case 'ni': return convertFilter($field, 'nin', $value); // deprecated
-                case 'no': return convertFilter($field, 'nis', $value); // deprecated
-            }
-        } else*/
-            if (strlen($comparator)==3) {
+        if (strlen($comparator)==3) {
             switch ($comparator) {
                 case 'ncs': return array('? NOT LIKE ?',$field,'%'.addcslashes($value,'%_').'%');
                 case 'nsw': return array('? NOT LIKE ?',$field,addcslashes($value,'%_').'%');
@@ -465,8 +452,6 @@ function convertFilter($field, $comparator, $value) {
                     $v = explode(',',$value);
                     if (count($v)<2) return false;
                     return array('? NOT BETWEEN ? AND ?',$field,$v[0],$v[1]);
-        //        case 'nin': return array('? NOT IN ?',$field,explode(',',$value));
-                //case 'nis': return array('? IS NOT NULL',$field);
             }
         }
     }
@@ -474,8 +459,6 @@ function convertFilter($field, $comparator, $value) {
 }
 
 function addWhereFromFilters($filters,&$sql,&$params) {
-  //  echo json_encode($filters);
-
     $first = true;
     $descCol=Bodies::getDescColumns();
             
