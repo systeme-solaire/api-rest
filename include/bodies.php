@@ -6,7 +6,7 @@ class Bodies implements JsonSerializable{
     private $excludeColumn;
     private $limitToColumn;
 
-    const FIELDS = "CPT_CORPS, NOM, BL_PLANETE, CPTE_CORPS, NOM_ANGLAIS, DEMIGRAND_AXE, EXCENTRICITE, DECOUV_QUI, DECOUV_QD, DES_TEMPO, mass_val, mass_unit, density, gravity, escape, vol_val, vol_unit, perihelion, aphelion, eccentricity, inclinaison, equa_radius, mean_radius, polar_radius, flattening, sideral_orbit, sideral_rotation";
+    const FIELDS = "CPT_CORPS, NOM, BL_PLANETE, CPTE_CORPS, NOM_ANGLAIS, DEMIGRAND_AXE, DECOUV_QUI, DECOUV_QD, DES_TEMPO, mass_val, mass_unit, density, gravity, escape, vol_val, vol_unit, perihelion, aphelion, eccentricity, inclination, equa_radius, mean_radius, polar_radius, flattening, sideral_orbit, sideral_rotation";
     const TABLE = "syssol_tab_donnees";
 
     protected $isExists;
@@ -36,7 +36,7 @@ class Bodies implements JsonSerializable{
     protected $massVal;
     protected $massExponent;
     protected $volVal;
-    protected $volUnit;
+    protected $volExponent;
 
     public function isExists(){
         return $this->isExists;
@@ -50,9 +50,6 @@ class Bodies implements JsonSerializable{
     }
     public function getSemimajorAxis(){
         return $this->semimajorAxis;
-    }
-    public function getOrbitalExcentricity(){
-        return str_replace(",", ".", $this->orbitalExcentricity);
     }
     public function getId(){
         return $this->id;
@@ -103,7 +100,7 @@ class Bodies implements JsonSerializable{
         return $this->escape;
     }
     public function getMeanRadius(){
-        return $this->mean_radius;
+        return $this->meanRadius;
     }
     public function getEquaRadius(){
         return $this->equaRadius;
@@ -123,8 +120,8 @@ class Bodies implements JsonSerializable{
     public function getVolVal(){
         return $this->volVal;
     }
-    public function getVolUnit(){
-        return $this->volUnit;
+    public function getVolExponent(){
+        return $this->volExponent;
     }
 
     public function __construct($id, $limitToColumn, $excludeColumn){
@@ -158,12 +155,29 @@ class Bodies implements JsonSerializable{
             $this->semimajorAxis = $donnees["DEMIGRAND_AXE"];
             $this->aroundPlanet = $donnees["CPTE_CORPS"];
             $this->englishName = $donnees["NOM_ANGLAIS"];
-            $this->orbitalExcentricity = $donnees["EXCENTRICITE"];
+            $this->eccentricity = $donnees["eccentricity"];
             $this->discoveredBy = $donnees["DECOUV_QUI"];
             $this->discoveryDate = $donnees["DECOUV_QD"];
             $this->alternativeName = $donnees["DES_TEMPO"];
             $this->massVal = $donnees["mass_val"];
             $this->massExponent = $donnees["mass_unit"];
+            $this->volVal = $donnees["vol_val"];
+            $this->volExponent = $donnees["vol_unit"];
+            $this->perihelion = $donnees["perihelion"];
+            $this->aphelion = $donnees["aphelion"];
+            $this->inclination = $donnees["inclination"]; 
+            $this->density = $donnees["density"]; 
+            $this->gravity = $donnees["gravity"]; 
+            $this->escape = $donnees["escape"]; 
+            $this->meanRadius = $donnees["mean_radius"]; 
+            $this->equaRadius = $donnees["equa_radius"]; 
+            $this->polarRadius = $donnees["polar_radius"]; 
+            $this->flattening = $donnees["flattening"]; 
+            $this->sideralOrbit = $donnees["sideral_orbit"]; 
+            $this->sideralRotation = $donnees["sideral_rotation"]; 
+            $this->volVal = $donnees["vol_val"];
+            $this->volExponent = $donnees["vol_unit"];
+
         }
         $result->closeCursor();
 
@@ -187,11 +201,25 @@ class Bodies implements JsonSerializable{
                     case "semimajorAxis":       $result+=array('semimajorAxis' => $this->getSemimajorAxis());break;
                     case "aroundPlanet":        $result+=array('aroundPlanet' => ($this->getAroundPlanet()<>""?array('planet' => $this->getAroundPlanet(), 'rel' => $GLOBALS['API_URL'].'/'.$this->getAroundPlanet()):null));break;
                     case "englishName":         $result+=array('englishName' => $this->getEnglishName()); break;
-                    case "orbitalExcentricity": $result+=array('orbitalExcentricity' => $this->getOrbitalExcentricity());break;
+                    case "eccentricity":        $result+=array('eccentricity' => $this->getEccentricity());break;
                     case "discoveredBy":        $result+=array('discoveredBy' => $this->getDiscoveredBy()); break;
                     case "discoveryDate":       $result+=array('discoveryDate' => $this->getDiscoveryDate()); break;
                     case "alternativeName":     $result+=array('alternativeName' => $this->getAlternativeName()); break;
                     case "mass":                $result+=array('mass' => ($this->getMassVal()<>0?array('massValue' => $this->getMassVal(), 'massExponent' => $this->getMassUnit()):null));break;
+                    case "vol":                 $result+=array('vol' => ($this->getVolVal()<>0?array('volValue' => $this->getVolVal(), 'volExponent' => $this->getVolUnit()):null));break;
+                    case "perihelion":          $result+=array('perihelion' => $this->getPerihelion());break;
+                    case "aphelion":            $result+=array('aphelion' => $this->getAphelion());break; 
+                    case "inclination":         $result+=array('inclination' => $this->getInclination());break;
+                    case "density":             $result+=array('density' => $this->getDensity());break; 
+                    case "gravity":             $result+=array('gravity' => $this->getGravity());break; 
+                    case "escape":              $result+=array('escape' => $this->getEscape());break; 
+                    case "meanRadius":          $result+=array('meanRadius' => $this->getMeanRadius());break; 
+                    case "equaRadius":          $result+=array('equaRadius' => $this->getEquaRadius());break;
+                    case "polarRadius":         $result+=array('polarRadius' => $this->getPolarRadius());break; 
+                    case "flattening":          $result+=array('flattening' => $this->getFlattening());break; 
+                    case "aroundPlanet":        $result+=array('aroundPlanet' => $this->getAroundPlanet());break;
+                    case "sideralOrbit":        $result+=array('sideralOrbit' => $this->getSideralOrbit());break;
+                    case "sideralRotation":     $result+=array('sideralRotation' => $this->getSideralRotation());break; 
                 }
                 $j++;
             }
@@ -250,7 +278,7 @@ class Bodies implements JsonSerializable{
         return $result;
     }
 
-    public static function getOne($object, $allColumns, $isRelPresent, $isMoonPresent, $isPlanetPresent, $isMassValuePresent, $isMassExpPresent){
+    public static function getOne($object, $allColumns, $isRelPresent, $isMoonPresent, $isPlanetPresent, $isMassValuePresent, $isMassExpPresent, $isVolValuePresent, $isVolExpPresent){
         $result='{';
         if ($object->getId()!==null) {
             $j=0; // pour les colonnes
@@ -274,9 +302,48 @@ class Bodies implements JsonSerializable{
                     case "semimajorAxis":
                         $result .= '"semimajorAxis":' . ($object->getSemimajorAxis() != 0 ? $object->getSemimajorAxis() : 0) . '';
                         break;
-                    case "orbitalExcentricity":
-                        $result .= '"orbitalExcentricity":' . ($object->getOrbitalExcentricity() != 0 ? $object->getOrbitalExcentricity() : 0) . '';
+                    case "perihelion":
+                        $result .= '"perihelion":' . ($object->getPerihelion() != 0 ? $object->getPerihelion() : 0) . '';
                         break;
+                    case "aphelion":
+                        $result .= '"aphelion":' . ($object->getAphelion() != 0 ? $object->getAphelion() : 0) . '';
+                        break;
+                    case "eccentricity":
+                        $result .= '"eccentricity":' . ($object->getEccentricity() != 0 ? $object->getEccentricity() : 0) . '';
+                        break;
+                    case "inclination":
+                        $result .= '"inclination":' . ($object->getInclination() != 0 ? $object->getInclination() : 0) . '';         
+                        break;
+                    case "density":             
+                        $result .= '"density":' . ($object->getDensity() != 0 ? $object->getDensity() : 0) . '';
+                        break; 
+                    case "gravity":            
+                        $result .= '"gravity":' . ($object->getGravity() != 0 ? $object->getGravity() : 0) . '';
+                        break; 
+                    case "escape":              
+                        $result .= '"escape":' . ($object->getEscape() != 0 ? $object->getEscape() : 0) . '';
+                        break; 
+                    case "meanRadius":          
+                        $result .= '"meanRadius":' . ($object->getMeanRadius() != 0 ? $object->getMeanRadius() : 0) . '';
+                        break; 
+                    case "equaRadius":          
+                        $result .= '"equaRadius":' . ($object->getEquaRadius() != 0 ? $object->getEquaRadius() : 0) . '';
+                        break;
+                    case "polarRadius":         
+                        $result .= '"polarRadius":' . ($object->getPolarRadius() != 0 ? $object->getPolarRadius() : 0) . '';
+                        break; 
+                    case "flattening":          
+                        $result .= '"flattening":' . ($object->getFlattening() != 0 ? $object->getFlattening() : 0) . '';
+                        break; 
+                    case "aroundPlanet":        
+                        $result .= '"aroundPlanet":' . ($object->getAroundPlanet() != 0 ? $object->getAroundPlanet() : 0) . '';
+                        break;
+                    case "sideralOrbit":       
+                        $result .= '"sideralOrbit":' . ($object->getSideralOrbit() != 0 ? $object->getSideralOrbit() : 0) . '';
+                        break;
+                    case "sideralRotation":     
+                        $result .= '"sideralRotation":' . ($object->getSideralRotation() != 0 ? $object->getSideralRotation() : 0) . '';
+                        break; 
                     case "mass":
                         $result .= '"mass":';
                         if ($object->getMassVal() <> 0) {
@@ -292,7 +359,23 @@ class Bodies implements JsonSerializable{
                         } else {
                             $result .= 'null';
                         }
-                    break;
+                        break;
+                    case "vol":
+                        $result .= '"vol":';
+                        if ($object->getMassVal() <> 0) {
+                            $result .= '{';
+                            if ($isVolValuePresent) {
+                                $result .= '"volValue":' . $object->getVolVal() ;
+                            }
+                            if ($isVolExpPresent) {
+                                if ($isVolValuePresent) $result .= ', ';
+                                $result .= '"volExponent":' . $object->getVolExponent();
+                            }
+                            $result .= '}';
+                        } else {
+                            $result .= 'null';
+                        }
+                        break;
                     case "aroundPlanet":
                             $result .= '"aroundPlanet":';
                             if ($object->getAroundPlanet() <> "") {
@@ -331,7 +414,7 @@ class Bodies implements JsonSerializable{
         return $result;
     }
 
-    public static function getAll($allColumns, $brutData, $orderings, $page, $filters, $isRelPresent, $isPlanetPresent, $isMoonPresent, $isMassValuePresent, $isMassExpPresent){
+    public static function getAll($allColumns, $brutData, $orderings, $page, $filters, $isRelPresent, $isPlanetPresent, $isMoonPresent, $isMassValuePresent, $isMassExpPresent, $isVolValuePresent, $isVolExpPresent){
         DBAccess::ConfigInit();
         $scriptsql = "SELECT ".self::FIELDS." FROM ".self::TABLE."";
 
@@ -434,6 +517,35 @@ class Bodies implements JsonSerializable{
                             $result .= 'null';
                         }
                         break;
+                    case 'vol':
+                        if ($row["vol_val"]!=0){
+                            // il a une masse
+                            if (!$brutData) {
+                                $result .= '{';
+                                if ($isVolValuePresent) {
+                                    $result .= '"volValue":' . $row["vol_val"];
+                                }
+                                if ($isVolExpPresent) {
+                                    if ($isVolValuePresent) $result .= ',';
+                                    $result .= '"volExponent":' . $row["vol_unit"] ;
+                                }
+                                $result .= '}';
+                            }else{
+                                $result .= '[';
+                                if ($isVolValuePresent) {
+                                    $result .= $row["vol_val"];
+                                }
+                                if ($isVolExpPresent) {
+                                    if ($isVolValuePresent) $result .= ',';
+                                    $result .= $row["vol_unit"];
+                                }
+                                $result .= ']';
+                            }
+                        }else{
+                            // ce n'est pas un satellite
+                            $result .= 'null';
+                        }
+                        break;
                     case "moons":
                         if ($row["BL_PLANETE"] != 0){
                             $result .= Bodies::getSatellite($row["CPT_CORPS"], $brutData, $isRelPresent, $isMoonPresent);
@@ -493,8 +605,21 @@ class Bodies implements JsonSerializable{
         $descColumns[]=new Column("isPlanet", "BL_PLANETE", "boolean");
         $descColumns[]=new Column("moons", "", "");
         $descColumns[]=new Column("semimajorAxis", "DEMIGRAND_AXE", "number");
-        $descColumns[]=new Column("orbitalExcentricity", "EXCENTRICITE", "number");
+        $descColumns[]=new Column("perihelion", "perihelion", "number");
+        $descColumns[]=new Column("aphelion", "aphelion", "number");
+        $descColumns[]=new Column("eccentricity", "eccentricity", "number");
+        $descColumns[]=new Column("inclination", "inclination", "number");
         $descColumns[]=new Column("mass", "", "");
+        $descColumns[]=new Column("vol", "", "");
+        $descColumns[]=new Column("density", "density", "number");
+        $descColumns[]=new Column("gravity", "gravity", "number");
+        $descColumns[]=new Column("escape", "escape", "number");
+        $descColumns[]=new Column("meanRadius", "mean_radius", "number");
+        $descColumns[]=new Column("equaRadius", "equa_radius", "number");
+        $descColumns[]=new Column("polarRadius", "polar_radius", "number");
+        $descColumns[]=new Column("flattening", "flattening", "number");
+        $descColumns[]=new Column("sideralOrbit", "sideral_orbit", "number");
+        $descColumns[]=new Column("sideralRotation", "sideral_rotation", "number");
         $descColumns[]=new Column("aroundPlanet", "CPTE_CORPS", "string");
         $descColumns[]=new Column("discoveredBy", "DECOUV_QUI", "string");
         $descColumns[]=new Column("discoveryDate", "DECOUV_QD", "string");
@@ -515,6 +640,9 @@ class Bodies implements JsonSerializable{
                     break;
                 case 'mass':
                     echo '"mass":{"type":"object", "properties":{ "massValue" :{"type":"number"}, "massExponent" :{"type":"integer"}}}';
+                    break;
+                case 'vol':
+                    echo '"vol":{"type":"object", "properties":{ "volValue" :{"type":"number"}, "volExponent" :{"type":"integer"}}}';
                     break;
                 default :
                     echo '"' . $col->getColId() . '": {"type": "' . $col->getColType() . '"}';

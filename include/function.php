@@ -122,6 +122,8 @@ function listCommand($parameters)
     $isMoonPresent=isFilterPresent('moon', $datas, $exclude);
     $isMassValuePresent=isFilterPresent('massValue', $datas, $exclude);
     $isMassExpPresent=isFilterPresent('massExponent', $datas, $exclude);
+    $isVolValuePresent=isFilterPresent('volValue', $datas, $exclude);
+    $isVolExpPresent=isFilterPresent('volExponent', $datas, $exclude);
 
     echo '{"' . $GLOBALS['object'] . '":';
     if ($brutData){
@@ -167,6 +169,17 @@ function listCommand($parameters)
                         }
                         $columnString .= ']}';
                         break;
+                    case 'vol':
+                        $columnString .= '{"' . $column->getColId() . '":[';
+                        if ($isVolValuePresent) {
+                            $columnString .= '"volValue"';
+                        }
+                        if ($isVolExpPresent) {
+                            if ($isVolValuePresent) $columnString .= ',';
+                            $columnString .= '"volExponent"';
+                        }
+                        $columnString .= ']}';
+                        break;
                     default:
                         $columnString .= '"' . $column->getColId() . '"';
                         break;
@@ -185,7 +198,7 @@ function listCommand($parameters)
     }
 
     echo '[';
-    echo Bodies::getAll($allColumns, $brutData, $orderings, $page, $filters, $isRelPresent, $isPlanetPresent, $isMoonPresent, $isMassValuePresent, $isMassExpPresent);
+    echo Bodies::getAll($allColumns, $brutData, $orderings, $page, $filters, $isRelPresent, $isPlanetPresent, $isMoonPresent, $isMassValuePresent, $isMassExpPresent, $isVolValuePresent, $isVolExpPresent);
     echo ']';
     if ($brutData){ echo '}';}
     echo '}';//fin
@@ -207,6 +220,8 @@ function readCommand($parameters) {
     $isMoonPresent=isFilterPresent('moon', $datas, $exclude);
     $isMassValuePresent=isFilterPresent('massValue', $datas, $exclude);
     $isMassExpPresent=isFilterPresent('massExponent', $datas, $exclude);
+    $isVolValuePresent=isFilterPresent('volValue', $datas, $exclude);
+    $isVolExpPresent=isFilterPresent('volExponent', $datas, $exclude);
 
     $object = new Bodies($key, $datas, $exclude);
     if (!$object->isExists()) {
@@ -219,7 +234,7 @@ function readCommand($parameters) {
         exitWith404('entity');
     }else {
         startOutput();
-        echo Bodies::getOne($object, $allColumns, $isRelPresent, $isMoonPresent, $isPlanetPresent, $isMassValuePresent, $isMassExpPresent);
+        echo Bodies::getOne($object, $allColumns, $isRelPresent, $isMoonPresent, $isPlanetPresent, $isMassValuePresent, $isMassExpPresent, $isVolValuePresent, $isVolExpPresent);
     }
     return false;
 }
