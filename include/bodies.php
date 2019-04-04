@@ -6,7 +6,7 @@ class Bodies implements JsonSerializable{
     private $excludeColumn;
     private $limitToColumn;
 
-    const FIELDS = "CPT_CORPS, NOM, BL_PLANETE, CPTE_CORPS, NOM_ANGLAIS, DEMIGRAND_AXE, DECOUV_QUI, DECOUV_QD, DES_TEMPO, mass_val, mass_unit, density, gravity, escape, vol_val, vol_unit, perihelion, aphelion, eccentricity, inclination, equa_radius, mean_radius, polar_radius, flattening, sideral_orbit, sideral_rotation";
+    const FIELDS = "CPT_CORPS, NOM, BL_PLANETE, CPTE_CORPS, NOM_ANGLAIS, DEMIGRAND_AXE, DECOUV_QUI, DECOUV_QD, DES_TEMPO, mass_val, mass_unit, density, gravity, escape, vol_val, vol_unit, perihelion, aphelion, eccentricity, inclination, equa_radius, mean_radius, polar_radius, flattening, sideral_orbit, sideral_rotation, dimension";
     const TABLE = "syssol_tab_donnees";
 
     protected $isExists;
@@ -26,6 +26,7 @@ class Bodies implements JsonSerializable{
     protected $equaRadius; 
     protected $polarRadius; 
     protected $flattening; 
+    protected $dimension; 
     protected $aroundPlanet;
     protected $sideralOrbit; 
     protected $sideralRotation; 
@@ -111,6 +112,9 @@ class Bodies implements JsonSerializable{
     public function getFlattening(){
         return $this->flattening;
     }
+    public function getDimension(){
+        return $this->dimension;
+    }
     public function getSideralOrbit(){
         return $this->sideralOrbit;
     }
@@ -173,6 +177,7 @@ class Bodies implements JsonSerializable{
             $this->equaRadius = $donnees["equa_radius"]; 
             $this->polarRadius = $donnees["polar_radius"]; 
             $this->flattening = $donnees["flattening"]; 
+            $this->dimension = $donnees["dimension"]; 
             $this->sideralOrbit = $donnees["sideral_orbit"]; 
             $this->sideralRotation = $donnees["sideral_rotation"]; 
             $this->volVal = $donnees["vol_val"];
@@ -217,7 +222,7 @@ class Bodies implements JsonSerializable{
                     case "equaRadius":          $result+=array('equaRadius' => $this->getEquaRadius());break;
                     case "polarRadius":         $result+=array('polarRadius' => $this->getPolarRadius());break; 
                     case "flattening":          $result+=array('flattening' => $this->getFlattening());break; 
-                    case "aroundPlanet":        $result+=array('aroundPlanet' => $this->getAroundPlanet());break;
+                    case "dimension":           $result+=array('dimension' => $this->getDimension());break; 
                     case "sideralOrbit":        $result+=array('sideralOrbit' => $this->getSideralOrbit());break;
                     case "sideralRotation":     $result+=array('sideralRotation' => $this->getSideralRotation());break; 
                 }
@@ -335,9 +340,9 @@ class Bodies implements JsonSerializable{
                     case "flattening":          
                         $result .= '"flattening":' . ($object->getFlattening() != 0 ? $object->getFlattening() : 0) . '';
                         break; 
-                    case "aroundPlanet":        
-                        $result .= '"aroundPlanet":' . ($object->getAroundPlanet() != 0 ? $object->getAroundPlanet() : 0) . '';
-                        break;
+                    case "dimension":          
+                        $result .= '"dimension":"'.$object->getDimension(). '"';
+                        break; 
                     case "sideralOrbit":       
                         $result .= '"sideralOrbit":' . ($object->getSideralOrbit() != 0 ? $object->getSideralOrbit() : 0) . '';
                         break;
@@ -618,6 +623,7 @@ class Bodies implements JsonSerializable{
         $descColumns[]=new Column("equaRadius", "equa_radius", "number");
         $descColumns[]=new Column("polarRadius", "polar_radius", "number");
         $descColumns[]=new Column("flattening", "flattening", "number");
+        $descColumns[]=new Column("dimension", "dimension", "string");
         $descColumns[]=new Column("sideralOrbit", "sideral_orbit", "number");
         $descColumns[]=new Column("sideralRotation", "sideral_rotation", "number");
         $descColumns[]=new Column("aroundPlanet", "CPTE_CORPS", "string");
