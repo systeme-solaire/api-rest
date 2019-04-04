@@ -6,7 +6,7 @@ class Bodies implements JsonSerializable{
     private $excludeColumn;
     private $limitToColumn;
 
-    const FIELDS = "CPT_CORPS, NOM, BL_PLANETE, DEMIGRAND_AXE, CPTE_CORPS, NOM_ANGLAIS, EXCENTRICITE, DECOUV_QUI, DECOUV_QD, DES_TEMPO, masse_val, masse_unit";
+    const FIELDS = "CPT_CORPS, NOM, BL_PLANETE, CPTE_CORPS, NOM_ANGLAIS, DEMIGRAND_AXE, EXCENTRICITE, DECOUV_QUI, DECOUV_QD, DES_TEMPO, mass_val, mass_unit, density, gravity, escape, vol_val, vol_unit, perihelion, aphelion, eccentricity, inclinaison, equa_radius, mean_radius, polar_radius, flattening, sideral_orbit, sideral_rotation";
     const TABLE = "syssol_tab_donnees";
 
     protected $isExists;
@@ -15,13 +15,28 @@ class Bodies implements JsonSerializable{
     protected $name;
     protected $isPlanet;
     protected $semimajorAxis;
+    protected $perihelion;
+    protected $aphelion;
+    protected $eccentricity; 
+    protected $inclination; 
+    protected $density; 
+    protected $gravity; 
+    protected $escape; 
+    protected $meanRadius; 
+    protected $equaRadius; 
+    protected $polarRadius; 
+    protected $flattening; 
     protected $aroundPlanet;
+    protected $sideralOrbit; 
+    protected $sideralRotation; 
     protected $englishName;
     protected $discoveredBy;
     protected $discoveryDate;
     protected $alternativeName;
     protected $massVal;
     protected $massExponent;
+    protected $volVal;
+    protected $volUnit;
 
     public function isExists(){
         return $this->isExists;
@@ -66,6 +81,51 @@ class Bodies implements JsonSerializable{
     public function getMassExponent(){
         return $this->massExponent;
     }
+    public function getPerihelion(){
+        return $this->perihelion;
+    }
+    public function getAphelion(){
+        return $this->aphelion;
+    }
+    public function getEccentricity(){
+        return $this->eccentricity;
+    }
+    public function getInclination(){
+        return $this->inclination;
+    }
+    public function getDensity(){
+        return $this->density;
+    }
+    public function getGravity(){
+        return $this->gravity;
+    }
+    public function getEscape(){
+        return $this->escape;
+    }
+    public function getMeanRadius(){
+        return $this->mean_radius;
+    }
+    public function getEquaRadius(){
+        return $this->equaRadius;
+    }
+    public function getPolarRadius(){
+        return $this->polarRadius;
+    }
+    public function getFlattening(){
+        return $this->flattening;
+    }
+    public function getSideralOrbit(){
+        return $this->sideralOrbit;
+    }
+    public function getSideralRotation(){
+        return $this->sideralRotation;
+    }
+    public function getVolVal(){
+        return $this->volVal;
+    }
+    public function getVolUnit(){
+        return $this->volUnit;
+    }
 
     public function __construct($id, $limitToColumn, $excludeColumn){
         DBAccess::ConfigInit();
@@ -102,8 +162,8 @@ class Bodies implements JsonSerializable{
             $this->discoveredBy = $donnees["DECOUV_QUI"];
             $this->discoveryDate = $donnees["DECOUV_QD"];
             $this->alternativeName = $donnees["DES_TEMPO"];
-            $this->massVal = $donnees["masse_val"];
-            $this->massExponent = $donnees["masse_unit"];
+            $this->massVal = $donnees["mass_val"];
+            $this->massExponent = $donnees["mass_unit"];
         }
         $result->closeCursor();
 
@@ -131,7 +191,7 @@ class Bodies implements JsonSerializable{
                     case "discoveredBy":        $result+=array('discoveredBy' => $this->getDiscoveredBy()); break;
                     case "discoveryDate":       $result+=array('discoveryDate' => $this->getDiscoveryDate()); break;
                     case "alternativeName":     $result+=array('alternativeName' => $this->getAlternativeName()); break;
-                    case "mass":                $result+=array('mass' => ($this->getMasseVal()<>0?array('massValue' => $this->getMasseVal(), 'massExponent' => $this->getMasseUnit()):null));break;
+                    case "mass":                $result+=array('mass' => ($this->getMassVal()<>0?array('massValue' => $this->getMassVal(), 'massExponent' => $this->getMassUnit()):null));break;
                 }
                 $j++;
             }
@@ -226,7 +286,7 @@ class Bodies implements JsonSerializable{
                             }
                             if ($isMassExpPresent) {
                                 if ($isMassValuePresent) $result .= ', ';
-                                $result .= '"massExponent":' . $object->getmassExponent();
+                                $result .= '"massExponent":' . $object->getMassExponent();
                             }
                             $result .= '}';
                         } else {
@@ -270,6 +330,7 @@ class Bodies implements JsonSerializable{
         $result.='}';
         return $result;
     }
+
     public static function getAll($allColumns, $brutData, $orderings, $page, $filters, $isRelPresent, $isPlanetPresent, $isMoonPresent, $isMassValuePresent, $isMassExpPresent){
         DBAccess::ConfigInit();
         $scriptsql = "SELECT ".self::FIELDS." FROM ".self::TABLE."";
@@ -345,26 +406,26 @@ class Bodies implements JsonSerializable{
                         }
                         break;
                     case 'mass':
-                        if ($row["masse_val"]!=0){
+                        if ($row["mass_val"]!=0){
                             // il a une masse
                             if (!$brutData) {
                                 $result .= '{';
                                 if ($isMassValuePresent) {
-                                    $result .= '"masseValue":' . $row["masse_val"];
+                                    $result .= '"massValue":' . $row["mass_val"];
                                 }
                                 if ($isMassExpPresent) {
                                     if ($isMassValuePresent) $result .= ',';
-                                    $result .= '"massExponent":' . $row["masse_unit"] ;
+                                    $result .= '"massExponent":' . $row["mass_unit"] ;
                                 }
                                 $result .= '}';
                             }else{
                                 $result .= '[';
                                 if ($isMassValuePresent) {
-                                    $result .= $row["masse_val"];
+                                    $result .= $row["mass_val"];
                                 }
                                 if ($isMassExpPresent) {
                                     if ($isMassValuePresent) $result .= ',';
-                                    $result .= $row["masse_unit"];
+                                    $result .= $row["mass_unit"];
                                 }
                                 $result .= ']';
                             }
