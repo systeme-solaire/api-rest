@@ -3,7 +3,7 @@ define("LOADED_AS_MODULE","1");
 $GLOBALS['object']='bodies';
 $GLOBALS['DEBUG']=0;
 
-$GLOBALS['API_VERSION']="1.0.0";
+$GLOBALS['API_VERSION']="1.0.1";
 
 $GLOBALS['VirtualHost']="api";
 if ($_SERVER['HTTP_HOST']==$GLOBALS['VirtualHost']){

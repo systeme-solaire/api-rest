@@ -46,7 +46,7 @@ function echoParameters(){
     echo '"type":"string"';
     echo '},';
     echo '{';
-    echo '"name":"brutData",';
+    echo '"name":"rowData",';
     echo '"in":"query",';
     echo '"description":"Transform the object in records. NB: This can also be done client-side in JavaScript!",';
     echo '"required":false,';
@@ -126,7 +126,7 @@ function listCommand($parameters)
     $isVolExpPresent=isFilterPresent('volExponent', $datas, $exclude);
 
     echo '{"' . $GLOBALS['object'] . '":';
-    if ($brutData){
+    if ($rowData){
         echo '{"datas":';
 
         $columnString = '';
@@ -198,9 +198,9 @@ function listCommand($parameters)
     }
 
     echo '[';
-    echo Bodies::getAll($allColumns, $brutData, $orderings, $page, $filters, $isRelPresent, $isPlanetPresent, $isMoonPresent, $isMassValuePresent, $isMassExpPresent, $isVolValuePresent, $isVolExpPresent);
+    echo Bodies::getAll($allColumns, $rowData, $orderings, $page, $filters, $isRelPresent, $isPlanetPresent, $isMoonPresent, $isMassValuePresent, $isMassExpPresent, $isVolValuePresent, $isVolExpPresent);
     echo ']';
-    if ($brutData){ echo '}';}
+    if ($rowData){ echo '}';}
     echo '}';//fin
 
    // ob_end_flush();
@@ -590,7 +590,7 @@ function getParameters($settings,$request,$method,$get) {
     $exclude   = parseGetParameter($get, 'exclude', 'a-zA-Z0-9\-_,.*');
     $orderings = parseGetParameterArray($get, 'order', 'a-zA-Z0-9\-_,');
     $page      = parseGetParameter($get, 'page', '0-9,');
-    $brutData = parseGetParameter($get, 'brutData', 't1');
+    $rowData = parseGetParameter($get, 'rowData', 't1');
     $datas   = parseGetParameter($get, 'datas', 'a-zA-Z0-9\-_,.*');
     $filters   = parseGetParameterArray($get, 'filter', false);
     $satisfy   = parseGetParameter($get, 'satisfy', 'a-zA-Z0-9\-_,.');
@@ -604,6 +604,6 @@ function getParameters($settings,$request,$method,$get) {
 
     if ($table!=$GLOBALS['object']) exitWith404('entity');
 
-    return compact('action','tables','key','page','filters','orderings','brutData','exclude','datas');
+    return compact('action','tables','key','page','filters','orderings','rowData','exclude','datas');
 }
 ?>

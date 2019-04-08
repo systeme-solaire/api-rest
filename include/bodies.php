@@ -234,7 +234,7 @@ class Bodies implements JsonSerializable{
         return $result;
     }
 
-    public static function getSatellite($id, $brutData, $isRelPresent, $isMoonPresent){
+    public static function getSatellite($id, $rowData, $isRelPresent, $isMoonPresent){
         DBAccess::ConfigInit();
 
         $result="";
@@ -247,7 +247,7 @@ class Bodies implements JsonSerializable{
             $result = '[';
             while($row=$statement->fetch(PDO::FETCH_ASSOC)){
                 
-                if (!$brutData) {
+                if (!$rowData) {
                     $result .= '{';
                     if ($isMoonPresent) {
                         $result .= '"moon":"' . $row["NOM"] . '"';
@@ -419,7 +419,7 @@ class Bodies implements JsonSerializable{
         return $result;
     }
 
-    public static function getAll($allColumns, $brutData, $orderings, $page, $filters, $isRelPresent, $isPlanetPresent, $isMoonPresent, $isMassValuePresent, $isMassExpPresent, $isVolValuePresent, $isVolExpPresent){
+    public static function getAll($allColumns, $rowData, $orderings, $page, $filters, $isRelPresent, $isPlanetPresent, $isMoonPresent, $isMassValuePresent, $isMassExpPresent, $isVolValuePresent, $isVolExpPresent){
         DBAccess::ConfigInit();
         $scriptsql = "SELECT ".self::FIELDS." FROM ".self::TABLE."";
 
@@ -453,21 +453,21 @@ class Bodies implements JsonSerializable{
         while($row=$statement->fetch(PDO::FETCH_ASSOC)){
             $i++;
             $j=0; // pour les colonnes
-            if ($brutData) {
+            if ($rowData) {
                 $result = '[';
             }else{
                 $result = '{';
             }
 
             foreach ($allColumns as $column) {
-                if (!$brutData) {
+                if (!$rowData) {
                     $result .= '"' . $column->getColId() . '":';
                 }
                 switch ($column->getColId()){
                     case 'aroundPlanet':
                         if ($row[$column->getColName()]!=''){
                             // c'est un satellite
-                            if (!$brutData) {
+                            if (!$rowData) {
                                 $result .= '{';
                                 if ($isPlanetPresent) {
                                     $result .= '"planet":"' . $row[$column->getColName()] . '"';
@@ -496,7 +496,7 @@ class Bodies implements JsonSerializable{
                     case 'mass':
                         if ($row["mass_val"]!=0){
                             // il a une masse
-                            if (!$brutData) {
+                            if (!$rowData) {
                                 $result .= '{';
                                 if ($isMassValuePresent) {
                                     $result .= '"massValue":' . $row["mass_val"];
@@ -525,7 +525,7 @@ class Bodies implements JsonSerializable{
                     case 'vol':
                         if ($row["vol_val"]!=0){
                             // il a une masse
-                            if (!$brutData) {
+                            if (!$rowData) {
                                 $result .= '{';
                                 if ($isVolValuePresent) {
                                     $result .= '"volValue":' . $row["vol_val"];
@@ -553,7 +553,7 @@ class Bodies implements JsonSerializable{
                         break;
                     case "moons":
                         if ($row["BL_PLANETE"] != 0){
-                            $result .= Bodies::getSatellite($row["CPT_CORPS"], $brutData, $isRelPresent, $isMoonPresent);
+                            $result .= Bodies::getSatellite($row["CPT_CORPS"], $rowData, $isRelPresent, $isMoonPresent);
                         }else{
                             $result .= "null";
                         }
@@ -581,12 +581,12 @@ class Bodies implements JsonSerializable{
 
             if ($isRelPresent) {
                 $result .= ',';
-                if (!$brutData) {
+                if (!$rowData) {
                     $result .= '"rel":';
                 }
                 $result .= '"' . $GLOBALS['API_URL'] . '/' . $row["CPT_CORPS"] . '"';
             }
-            if ($brutData) {
+            if ($rowData) {
                 $result .= ']';
             }else{
                 $result .= '}';
