@@ -7,7 +7,7 @@ function swagger() {
     echo '{"swagger":"2.0",';
     echo '"info":{';
     echo '"title":"Solar System openData",';
-    echo '"description":"API to get all datas about all solar system objects",';
+    echo '"description":"API to get all data about all solar system objects",';
     echo '"version":"'.$GLOBALS['API_VERSION'].'"';
     echo '},'; //info
     echo '"host":"' . $_SERVER['HTTP_HOST'] . '",';
@@ -18,7 +18,7 @@ function swagger() {
     echo '"tags":[';
     echo '{';
     echo '"name":"'.$GLOBALS['object'].'",';
-    echo '"description":"Object with all datas about the concerned body : orbitals, physicals and atmosphere"';
+    echo '"description":"Object with all data about the concerned body : orbitals, physicals and atmosphere"';
     echo '}';
     echo '],'; //tag
     echo '"paths":{';

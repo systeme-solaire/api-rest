@@ -2,10 +2,10 @@
 if (!defined("LOADED_AS_MODULE")) {
     die ("Vous n'&ecirc;tes pas autoris&eacute; &agrave; acc&eacute;der directement &agrave; cette page...");
 }
-function isFilterPresent($filterName, $datas, $exclude){
+function isFilterPresent($filterName, $data, $exclude){
     $result=false;
-    $onlyCols = explode(',', $datas);
-    if (empty($datas) ||(!empty($datas) && in_array($filterName,$onlyCols))){
+    $onlyCols = explode(',', $data);
+    if (empty($data) ||(!empty($data) && in_array($filterName,$onlyCols))){
         $result=true;
     }
     $excCols = explode(',', $exclude);
@@ -18,7 +18,7 @@ function isFilterPresent($filterName, $datas, $exclude){
 function echoParameters(){
     echo '"parameters":[';
     echo '{';
-    echo '"name":"datas",';
+    echo '"name":"data",';
     echo '"in":"query",';
     echo '"description":"The data you want to retrieve (comma separated). Example: id,semimajorAxis,isPlanet.",';
     echo '"required":false,';
@@ -112,22 +112,22 @@ function listCommand($parameters)
     startOutput();
   //  ob_start("ob_gzhandler");
 
-    $allColumns = Bodies::getValidColumns($datas, $exclude);
+    $allColumns = Bodies::getValidColumns($data, $exclude);
     if (count($allColumns) == 0) {
-        exitWith403("You need more data in datas or less data in exclude");
+        exitWith403("You need more data in data or less data in exclude");
     }
 
-    $isRelPresent=isFilterPresent('rel', $datas, $exclude);
-    $isPlanetPresent=isFilterPresent('planet', $datas, $exclude);
-    $isMoonPresent=isFilterPresent('moon', $datas, $exclude);
-    $isMassValuePresent=isFilterPresent('massValue', $datas, $exclude);
-    $isMassExpPresent=isFilterPresent('massExponent', $datas, $exclude);
-    $isVolValuePresent=isFilterPresent('volValue', $datas, $exclude);
-    $isVolExpPresent=isFilterPresent('volExponent', $datas, $exclude);
+    $isRelPresent=isFilterPresent('rel', $data, $exclude);
+    $isPlanetPresent=isFilterPresent('planet', $data, $exclude);
+    $isMoonPresent=isFilterPresent('moon', $data, $exclude);
+    $isMassValuePresent=isFilterPresent('massValue', $data, $exclude);
+    $isMassExpPresent=isFilterPresent('massExponent', $data, $exclude);
+    $isVolValuePresent=isFilterPresent('volValue', $data, $exclude);
+    $isVolExpPresent=isFilterPresent('volExponent', $data, $exclude);
 
     echo '{"' . $GLOBALS['object'] . '":';
     if ($rowData){
-        echo '{"datas":';
+        echo '{"data":';
 
         $columnString = '';
         $colCount = count($allColumns);
@@ -210,20 +210,20 @@ function listCommand($parameters)
 function readCommand($parameters) {
     extract($parameters);
 
-    $allColumns=Bodies::getValidColumns($datas, $exclude);
+    $allColumns=Bodies::getValidColumns($data, $exclude);
     if (count($allColumns)==0){
         exitWith403("no column");
     }
 
-    $isRelPresent=isFilterPresent('rel',$datas, $exclude);
-    $isPlanetPresent=isFilterPresent('planet', $datas, $exclude);
-    $isMoonPresent=isFilterPresent('moon', $datas, $exclude);
-    $isMassValuePresent=isFilterPresent('massValue', $datas, $exclude);
-    $isMassExpPresent=isFilterPresent('massExponent', $datas, $exclude);
-    $isVolValuePresent=isFilterPresent('volValue', $datas, $exclude);
-    $isVolExpPresent=isFilterPresent('volExponent', $datas, $exclude);
+    $isRelPresent=isFilterPresent('rel',$data, $exclude);
+    $isPlanetPresent=isFilterPresent('planet', $data, $exclude);
+    $isMoonPresent=isFilterPresent('moon', $data, $exclude);
+    $isMassValuePresent=isFilterPresent('massValue', $data, $exclude);
+    $isMassExpPresent=isFilterPresent('massExponent', $data, $exclude);
+    $isVolValuePresent=isFilterPresent('volValue', $data, $exclude);
+    $isVolExpPresent=isFilterPresent('volExponent', $data, $exclude);
 
-    $object = new Bodies($key, $datas, $exclude);
+    $object = new Bodies($key, $data, $exclude);
     if (!$object->isExists()) {
         //existe pas mais la VF existe
         if ($object->isEnglish()) {
@@ -591,7 +591,7 @@ function getParameters($settings,$request,$method,$get) {
     $orderings = parseGetParameterArray($get, 'order', 'a-zA-Z0-9\-_,');
     $page      = parseGetParameter($get, 'page', '0-9,');
     $rowData = parseGetParameter($get, 'rowData', 't1');
-    $datas   = parseGetParameter($get, 'datas', 'a-zA-Z0-9\-_,.*');
+    $data   = parseGetParameter($get, 'data', 'a-zA-Z0-9\-_,.*');
     $filters   = parseGetParameterArray($get, 'filter', false);
     $satisfy   = parseGetParameter($get, 'satisfy', 'a-zA-Z0-9\-_,.');
 
@@ -604,6 +604,6 @@ function getParameters($settings,$request,$method,$get) {
 
     if ($table!=$GLOBALS['object']) exitWith404('entity');
 
-    return compact('action','tables','key','page','filters','orderings','rowData','exclude','datas');
+    return compact('action','tables','key','page','filters','orderings','rowData','exclude','data');
 }
 ?>
