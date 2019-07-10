@@ -666,7 +666,6 @@ class Bodies implements JsonSerializable{
 
         if (!empty($limitTo)) {
             // Limit to $limitTo columns
-            // $allColumns to $limitedColumns
             $limitedColumns = [];
             $onlyCols = explode(',', $limitTo);
             foreach ($allColumns as $col) {
@@ -701,11 +700,7 @@ class Bodies implements JsonSerializable{
                 $cleanedColumns[]=$col;
             }
         }
-   /*   //DEBUG
-        foreach ($limitedColumns as $col){
-            echo $col->getColName();
-        }
-   */
+
         return $cleanedColumns;
     }
 }
