@@ -2,6 +2,8 @@
 if (!defined("LOADED_AS_MODULE")) {
     die ("Vous n'&ecirc;tes pas autoris&eacute; &agrave; acc&eacute;der directement &agrave; cette page...");
 }
+
+/* Objet du système solaire */
 class Bodies implements JsonSerializable{
     private $excludeColumn;
     private $limitToColumn;
@@ -190,6 +192,8 @@ class Bodies implements JsonSerializable{
             $GLOBALS['BDD'] = null;
         }
     }
+
+    /* Serialization de l'objet */
     public function jsonSerialize() {
         $allColumns= Bodies::getValidColumns($this->limitToColumn, $this->excludeColumn);
 
@@ -234,6 +238,7 @@ class Bodies implements JsonSerializable{
         return $result;
     }
 
+    /* Obtenir les satellites d'un astre */
     public static function getSatellite($id, $rowData, $isRelPresent, $isMoonPresent){
         DBAccess::ConfigInit();
 
@@ -283,6 +288,7 @@ class Bodies implements JsonSerializable{
         return $result;
     }
 
+    /* renvoie le JSON d'un astre */
     public static function getOne($object, $allColumns, $isRelPresent, $isMoonPresent, $isPlanetPresent, $isMassValuePresent, $isMassExpPresent, $isVolValuePresent, $isVolExpPresent){
         $result='{';
         if ($object->getId()!==null) {
@@ -603,6 +609,7 @@ class Bodies implements JsonSerializable{
         return $results;
     }
 
+    /* Les properties */
     public static function getDescColumns(){
         $descColumns[]=new Column("id", "CPT_CORPS", "string");
         $descColumns[]=new Column("name", "NOM", "string");
@@ -633,6 +640,7 @@ class Bodies implements JsonSerializable{
         return $descColumns ;
     }
 
+    /* le Swagger des properties */
     public static function getDescSwaggerColumns($rel){
         $columns = Bodies::getDescColumns();
         $i = 0;
@@ -661,6 +669,8 @@ class Bodies implements JsonSerializable{
             echo ',"rel":{"type":"string"}';
         }
     }
+
+    /* pour faire le ménage dans les colonnes */
     public static function getValidColumns($limitTo, $exclude){
         $allColumns = Bodies::getDescColumns();
 
