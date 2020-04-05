@@ -136,7 +136,7 @@ class Bodies implements JsonSerializable{
         $this->excludeColumn=$excludeColumn;
         $this->limitToColumn=$limitToColumn;
 
-        $scriptsql = "SELECT ".self::FIELDS." FROM ".self::TABLE." WHERE CPT_CORPS = ?";
+        $scriptsql = "SELECT ".self::FIELDS." FROM ".self::TABLE." WHERE CPT_CORPS = ? AND API = 1";
         $result = $GLOBALS['BDD']->prepare($scriptsql);
         $result->execute(array($id));
         $this->isExists = true;
@@ -145,7 +145,7 @@ class Bodies implements JsonSerializable{
         if ($result->rowCount()==0) {
             $this->isExists = false;
             // on cherche la version anglaise
-            $scriptsql = "SELECT ".self::FIELDS." FROM ".self::TABLE." WHERE NOM_ANGLAIS = ?";
+            $scriptsql = "SELECT ".self::FIELDS." FROM ".self::TABLE." WHERE NOM_ANGLAIS = ? AND API = 1";
             $result = $GLOBALS['BDD']->prepare($scriptsql);
             $result->execute(array($id));
             if ($result->rowCount()!=0) {
@@ -243,7 +243,7 @@ class Bodies implements JsonSerializable{
         DBAccess::ConfigInit();
 
         $result="";
-        $scriptsql = "SELECT CPT_CORPS, NOM FROM ".self::TABLE." WHERE CPTE_CORPS = ?";
+        $scriptsql = "SELECT CPT_CORPS, NOM FROM ".self::TABLE." WHERE CPTE_CORPS = ? AND API = 1";
         $statement = $GLOBALS['BDD']->prepare($scriptsql);
         $statement->execute(array($id));
         $j=0;
