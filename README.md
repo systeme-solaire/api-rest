@@ -31,5 +31,6 @@ L'ensemble des données sont stockées en colonne :
     - SIDERAL_ORBIT, 
     - SIDERAL_ROTATION, 
     - DIMENSION
+    - INCLINAISON_AXE
 
     

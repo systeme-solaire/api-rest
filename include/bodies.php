@@ -8,7 +8,7 @@ class Bodies implements JsonSerializable{
     private $excludeColumn;
     private $limitToColumn;
 
-    const FIELDS = "CPT_CORPS, NOM, BL_PLANETE, CPTE_CORPS, NOM_ANGLAIS, DEMIGRAND_AXE, DECOUV_QUI, DECOUV_QD, DES_TEMPO, mass_val, mass_unit, density, gravity, escape, vol_val, vol_unit, perihelion, aphelion, eccentricity, inclination, equa_radius, mean_radius, polar_radius, flattening, sideral_orbit, sideral_rotation, dimension";
+    const FIELDS = "CPT_CORPS, NOM, BL_PLANETE, CPTE_CORPS, NOM_ANGLAIS, DEMIGRAND_AXE, DECOUV_QUI, DECOUV_QD, DES_TEMPO, mass_val, mass_unit, density, gravity, escape, vol_val, vol_unit, perihelion, aphelion, eccentricity, inclination, equa_radius, mean_radius, polar_radius, flattening, sideral_orbit, sideral_rotation, dimension, INCLINAISON_AXE";
     const TABLE = "syssol_tab_donnees";
 
     protected $isExists;
@@ -40,6 +40,7 @@ class Bodies implements JsonSerializable{
     protected $massExponent;
     protected $volVal;
     protected $volExponent;
+    protected $axialTilt;
 
     public function isExists(){
         return $this->isExists;
@@ -129,7 +130,15 @@ class Bodies implements JsonSerializable{
     public function getVolExponent(){
         return $this->volExponent;
     }
-
+    public function getAxialTilt(){
+        return $this->axialTilt;
+    }
+    public function getMassUnit(){
+        return $this->massExponent;
+    }
+    public function getVolUnit(){
+        return $this->volExponent;
+    }
     public function __construct($id, $limitToColumn, $excludeColumn){
         DBAccess::ConfigInit();
 
@@ -182,8 +191,7 @@ class Bodies implements JsonSerializable{
             $this->dimension = $donnees["dimension"]; 
             $this->sideralOrbit = $donnees["sideral_orbit"]; 
             $this->sideralRotation = $donnees["sideral_rotation"]; 
-            $this->volVal = $donnees["vol_val"];
-            $this->volExponent = $donnees["vol_unit"];
+            $this->axialTilt = $donnees["INCLINAISON_AXE"];
 
         }
         $result->closeCursor();
@@ -229,6 +237,7 @@ class Bodies implements JsonSerializable{
                     case "dimension":           $result+=array('dimension' => $this->getDimension());break; 
                     case "sideralOrbit":        $result+=array('sideralOrbit' => $this->getSideralOrbit());break;
                     case "sideralRotation":     $result+=array('sideralRotation' => $this->getSideralRotation());break; 
+                    case "axialTilt":           $result+=array('axialTilt' => $this->getAxialTilt());break;
                 }
                 $j++;
             }
@@ -345,6 +354,9 @@ class Bodies implements JsonSerializable{
                         break; 
                     case "flattening":          
                         $result .= '"flattening":' . ($object->getFlattening() != 0 ? $object->getFlattening() : 0) . '';
+                        break; 
+                    case "axialTilt":          
+                        $result .= '"axialTilt":' . ($object->getAxialTilt() != 0 ? $object->getAxialTilt() : 0) . '';
                         break; 
                     case "dimension":          
                         $result .= '"dimension":"'.$object->getDimension(). '"';
@@ -637,6 +649,7 @@ class Bodies implements JsonSerializable{
         $descColumns[]=new Column("discoveredBy", "DECOUV_QUI", "string");
         $descColumns[]=new Column("discoveryDate", "DECOUV_QD", "string");
         $descColumns[]=new Column("alternativeName", "DES_TEMPO", "string");
+        $descColumns[]=new Column("axialTilt", "INCLINAISON_AXE", "number");
         return $descColumns ;
     }
 
