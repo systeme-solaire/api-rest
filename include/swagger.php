@@ -22,12 +22,11 @@ function swagger() {
     echo '}';
     echo '],'; //tag
     echo '"paths":{';
-    echo '"/'.$GLOBALS['bodies'].'":{';
 
+    echo '"/'.$GLOBALS['bodies'].'":{';
     echo '"get":{';
     echo '"tags":["'.$GLOBALS['bodies'].'"],';
     echo '"summary":"List",';
-
     echoParametersForBodies();
     echo ',';
     echo '"responses":{';
@@ -41,7 +40,7 @@ function swagger() {
     echo '"items":{';
     echo '"type": "object",';
     echo '"properties": {';
-    Bodies::getDescSwaggerColumns(true);
+    Bodies::getDescSwaggerColumnsForBodies(true);
     echo '}'; //properties
     echo '}'; //items
     echo '}'; //table
@@ -49,15 +48,10 @@ function swagger() {
     echo '}'; //schema
     echo '}'; //200
     echo '}'; //responses
-
     echo '}'; //get
-    // }
-    echo '}'; //solarsystem
-
+    echo '}'; // /'.$GLOBALS['bodies']
 
     echo ',"/'.$GLOBALS['bodies'].'/{id}":{';
-    //     foreach ($table['id_actions'] as $j=>$action) {
-    //          if ($j>0) echo ',';
     echo '"get":{';
     echo '"tags":["'.$GLOBALS['bodies'].'"],';
     echo '"summary":"read",';
@@ -70,24 +64,76 @@ function swagger() {
     echo '"type":"string"';
     echo '}';
     echo '],'; // parameters
-    //   if ($action['name']=='read') {
     echo '"responses":{';
     echo '"200":{';
     echo '"description":"The requested item.",';
     echo '"schema":{';
     echo '"type": "object",';
     echo '"properties": {';
-    Bodies::getDescSwaggerColumns(false);
+    Bodies::getDescSwaggerColumnsForBodies(false);
     echo '}'; //properties
     echo '}'; //schema
     echo '}'; //200
     echo '}'; //responses
+    echo '}'; //get
+    echo '}'; // /'.$GLOBALS['bodies'].'/{id}
 
+    echo ',"/'.$GLOBALS['knowed'].'":{';
+    echo '"get":{';
+    echo '"tags":["'.$GLOBALS['knowed'].'"],';
+    echo '"summary":"List",';
+    echoParametersForKnowed();
+    echo ',';
+    echo '"responses":{';
+    echo '"200":{';
+    echo '"description":"An array of '.$GLOBALS['knowed'].'",';
+    echo '"schema":{';
+    echo '"type": "object",';
+    echo '"properties": {';
+    echo '"'.$GLOBALS['knowed'].'": {';
+    echo '"type":"array",';
+    echo '"items":{';
+    echo '"type": "object",';
+    echo '"properties": {';
+    Knowed::getDescSwaggerColumnsForKnowed(true);
+    echo '}'; //properties
+    echo '}'; //items
+    echo '}'; //table
+    echo '}'; //properties
+    echo '}'; //schema
+    echo '}'; //200
+    echo '}'; //responses
+    echo '}'; //get
+    echo '}'; // /'.$GLOBALS['knowed']
+
+    echo ',"/'.$GLOBALS['knowed'].'/{id}":{';
+    echo '"get":{';
+    echo '"tags":["'.$GLOBALS['knowed'].'"],';
+    echo '"summary":"read",';
+    echo '"parameters":[';
+    echo '{';
+    echo '"name":"id",';
+    echo '"in":"path",';
+    echo '"description":"Identifier for item.",';
+    echo '"required":true,';
+    echo '"type":"string"';
     echo '}';
-    echo '}';
-    //}
-    echo '}'; //table/id
-    //}
+    echo '],'; // parameters
+    echo '"responses":{';
+    echo '"200":{';
+    echo '"description":"The requested item.",';
+    echo '"schema":{';
+    echo '"type": "object",';
+    echo '"properties": {';
+    Knowed::getDescSwaggerColumnsForKnowed(false);
+    echo '}'; //properties
+    echo '}'; //schema
+    echo '}'; //200
+    echo '}'; //responses
+    echo '}'; //get
+    echo '}'; // /'.$GLOBALS['knowed'].'/{id}
+    
+    echo '}'; // path
     echo '}';
 }
 ?>

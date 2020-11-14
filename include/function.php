@@ -72,7 +72,17 @@ function echoParametersForBodies(){
     echo '}';
     echo ']'; 
 }
-
+function echoParametersForKnowed(){
+    echo '"parameters":[';
+    echo '{';
+    echo '"name":"rowData",';
+    echo '"in":"query",';
+    echo '"description":"Transform the object in records. NB: This can also be done client-side in JavaScript!",';
+    echo '"required":false,';
+    echo '"type":"boolean"';
+    echo '}';
+    echo ']'; 
+}
 function allowOrigin($allowOrigins) {
     if (isset($_SERVER['REQUEST_METHOD'])) {
         header('Access-Control-Allow-Credentials: true');
@@ -104,7 +114,13 @@ function executeCommand($settings, $request, $method, $get) {
             }
         }elseif ($api==$GLOBALS['knowed']){
             /* si action knowedNumber */
-            echo "knowed";
+            $parameters = getParametersForKnowed($settings,$request,$method,$get);
+            switch($parameters['action']){
+                case 'list': $output = listCommandForKnowed($parameters); break;
+                case 'read': $output = readCommandForKnowed($parameters); break;
+                case 'headers': $output = headersCommandForKnowed(); break;
+                default: $output = false;
+            }
         }else {
             exitWith404('entity');
         }
@@ -249,6 +265,73 @@ function readCommandForBodies($parameters) {
     return false;
 }
 
+
+function listCommandForKnowed($parameters)
+{
+    extract($parameters);
+
+    startOutput();
+  //  ob_start("ob_gzhandler");
+
+    $allColumns = Knowed::getValidColumns();
+    if (count($allColumns) == 0) {
+        exitWith403("You need more data in data or less data in exclude");
+    }
+
+    echo '{"' . $GLOBALS['knowed'] . '":';
+    if ($rowData){
+        echo '{"data":';
+
+        $columnString = '';
+        $colCount = count($allColumns);
+        if ($colCount > 0) {
+            $i = 0;
+            $columnString = '[';
+            foreach ($allColumns as $column) {
+                switch($column->getColId()){
+                    default:
+                        $columnString .= '"' . $column->getColId() . '"';
+                        break;
+                }
+                $i++;
+                if ($i < $colCount) $columnString .= ',';
+            }
+            $columnString .= ']';
+        }
+        echo $columnString;
+        echo ',';
+        echo '"records":';
+    }
+
+    echo '[';
+    echo Knowed::getAll($allColumns, $rowData);
+    echo ']';
+    if ($rowData){ echo '}';}
+    echo '}';//fin
+
+   // ob_end_flush();
+    return false;
+}
+
+function readCommandForKnowed($parameters) {
+    extract($parameters);
+
+    $allColumns=Knowed::getValidColumns();
+    if (count($allColumns)==0){
+        exitWith403("no column");
+    }
+
+    $object = new Knowed($key);
+    if (!$object->isExists()) {
+        // n'existe pas
+        exitWith404('entity');
+    }else {
+        startOutput();
+        echo Knowed::getOne($object,$allColumns);
+    }
+    return false;
+}
+
 function startOutput() {
     if (isset($_SERVER['REQUEST_METHOD'])) {
         header('Content-Type: application/json; charset=utf-8');
@@ -357,6 +440,32 @@ function headersCommandForBodies() {
 
     echo '"GET":{';
     echoParametersForBodies();
+    echo '}';
+    echo '}';
+    return false;
+}
+
+function headersCommandForKnowed() {
+    $headers = array();
+    $headers[]='Access-Control-Allow-Headers: Content-Type, X-XSRF-TOKEN';
+    $headers[]='Access-Control-Allow-Methods: OPTIONS, GET, HEAD';
+    $headers[]='Access-Control-Allow-Credentials: true';
+    $headers[]='Access-Control-Max-Age: 1728000';
+
+    foreach ($headers as $header) header($header);
+
+    startOutput();
+    echo '{';
+    echo '"header":{';
+    //echo json_encode($headers);
+    echo '"Access-Control-Allow-Headers": ["Content-Type", "X-XSRF-TOKEN"],';
+    echo '"Access-Control-Allow-Methods": ["OPTIONS", "GET", "HEAD"],';
+    echo '"Access-Control-Allow-Credentials": true,';
+    echo '"Access-Control-Max-Age": 1728000)';
+    echo '},';
+
+    echo '"GET":{';
+    echoParametersForKnowed();
     echo '}';
     echo '}';
     return false;
@@ -594,14 +703,14 @@ function processSatisfyParameter($tables,$satisfyString) {
 function getParametersForBodies($settings,$request,$method,$get) {
     extract($settings);
 
-    $table     = parseRequestParameter($request, 'a-zA-Z0-9\-_');
+    $query     = parseRequestParameter($request, 'a-zA-Z0-9\-_');  // /bodies
     $key       = parseRequestParameter($request, 'a-zA-Z0-9\-_,'); // auto-increment or uuid
     $action    = mapMethodToAction($method,$key);
     $exclude   = parseGetParameter($get, 'exclude', 'a-zA-Z0-9\-_,.*');
     $orderings = parseGetParameterArray($get, 'order', 'a-zA-Z0-9\-_,');
     $page      = parseGetParameter($get, 'page', '0-9,');
-    $rowData = parseGetParameter($get, 'rowData', 't1');
-    $data   = parseGetParameter($get, 'data', 'a-zA-Z0-9\-_,.*');
+    $rowData   = parseGetParameter($get, 'rowData', 't1');
+    $data      = parseGetParameter($get, 'data', 'a-zA-Z0-9\-_,.*');
     $filters   = parseGetParameterArray($get, 'filter', false);
     $satisfy   = parseGetParameter($get, 'satisfy', 'a-zA-Z0-9\-_,.');
 
@@ -613,5 +722,15 @@ function getParametersForBodies($settings,$request,$method,$get) {
     $page      = processPageParameter($page);
 
     return compact('action','tables','key','page','filters','orderings','rowData','exclude','data');
+}
+function getParametersForKnowed($settings,$request,$method,$get) {
+    extract($settings);
+
+    $query     = parseRequestParameter($request, 'a-zA-Z0-9\-_');  // /knowednumber
+    $key       = parseRequestParameter($request, 'a-zA-Z0-9\-_,'); // auto-increment or uuid
+    $action    = mapMethodToAction($method,$key);
+    $rowData   = parseGetParameter($get, 'rowData', 't1');
+
+    return compact('action','key','rowData');
 }
 ?>

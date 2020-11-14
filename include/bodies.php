@@ -654,7 +654,7 @@ class Bodies implements JsonSerializable{
     }
 
     /* le Swagger des properties */
-    public static function getDescSwaggerColumns($rel){
+    public static function getDescSwaggerColumnsForBodies($rel){
         $columns = Bodies::getDescColumns();
         $i = 0;
         foreach ($columns as $col) {

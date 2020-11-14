@@ -17,6 +17,7 @@ if ($_SERVER['HTTP_HOST']==$GLOBALS['VirtualHost']){
 include_once('include/column.php');
 include_once('include/dbaccess.php');
 include_once('include/bodies.php');
+include_once('include/knowed.php');
 include_once('include/swagger.php');
 include_once('include/function.php');
 
