@@ -1,6 +1,6 @@
 Le code de l'OpenData du Système Solaire présent sur https://api.le-systeme-solaire.net
 
-Expose les données présentes dans une table SQL `syssol_tab_donnees`
+/bodies Expose les données présentes dans une table SQL `syssol_tab_donnees`
 
 L'ensemble des données sont stockées en colonne :
 
@@ -33,4 +33,4 @@ L'ensemble des données sont stockées en colonne :
     - DIMENSION
     - INCLINAISON_AXE
 
-    
+/knowedNumber Expose les données présentes dans une table SQL `syssol_tab_knowed`

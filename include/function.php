@@ -15,7 +15,7 @@ function isFilterPresent($filterName, $data, $exclude){
     return $result;
 }
 
-function echoParameters(){
+function echoParametersForBodies(){
     echo '"parameters":[';
     echo '{';
     echo '"name":"data",';
@@ -91,12 +91,22 @@ function executeCommand($settings, $request, $method, $get) {
     if (!$settings['request']) {
         swagger();
     } else {
-        $parameters = getParameters($settings,$request,$method,$get);
-        switch($parameters['action']){
-            case 'list': $output = listCommand($parameters); break;
-            case 'read': $output = readCommand($parameters); break;
-            case 'headers': $output = headersCommand(); break;
-            default: $output = false;
+        $output = false;
+        $api=parseRequestParameter($request, 'a-zA-Z0-9\-_');
+        if ($api==$GLOBALS['bodies']){
+            /* si action bodies */
+            $parameters = getParametersForBodies($settings,$request,$method,$get);
+            switch($parameters['action']){
+                case 'list': $output = listCommandForBodies($parameters); break;
+                case 'read': $output = readCommandForBodies($parameters); break;
+                case 'headers': $output = headersCommandForBodies(); break;
+                default: $output = false;
+            }
+        }elseif ($api==$GLOBALS['knowed']){
+            /* si action knowedNumber */
+            echo "knowed";
+        }else {
+            exitWith404('entity');
         }
         if ($output!==false) {
             startOutput();
@@ -105,7 +115,7 @@ function executeCommand($settings, $request, $method, $get) {
     }
 }
 
-function listCommand($parameters)
+function listCommandForBodies($parameters)
 {
     extract($parameters);
 
@@ -125,7 +135,7 @@ function listCommand($parameters)
     $isVolValuePresent=isFilterPresent('volValue', $data, $exclude);
     $isVolExpPresent=isFilterPresent('volExponent', $data, $exclude);
 
-    echo '{"' . $GLOBALS['object'] . '":';
+    echo '{"' . $GLOBALS['bodies'] . '":';
     if ($rowData){
         echo '{"data":';
 
@@ -207,7 +217,7 @@ function listCommand($parameters)
     return false;
 }
 
-function readCommand($parameters) {
+function readCommandForBodies($parameters) {
     extract($parameters);
 
     $allColumns=Bodies::getValidColumns($data, $exclude);
@@ -326,7 +336,7 @@ function mapMethodToAction($method,$key) {
     return false;
 }
 
-function headersCommand() {
+function headersCommandForBodies() {
     $headers = array();
     $headers[]='Access-Control-Allow-Headers: Content-Type, X-XSRF-TOKEN';
     $headers[]='Access-Control-Allow-Methods: OPTIONS, GET, HEAD';
@@ -346,7 +356,7 @@ function headersCommand() {
     echo '},';
 
     echo '"GET":{';
-    echoParameters();
+    echoParametersForBodies();
     echo '}';
     echo '}';
     return false;
@@ -581,7 +591,7 @@ function processSatisfyParameter($tables,$satisfyString) {
     return $satisfy;
 }
 
-function getParameters($settings,$request,$method,$get) {
+function getParametersForBodies($settings,$request,$method,$get) {
     extract($settings);
 
     $table     = parseRequestParameter($request, 'a-zA-Z0-9\-_');
@@ -595,14 +605,12 @@ function getParameters($settings,$request,$method,$get) {
     $filters   = parseGetParameterArray($get, 'filter', false);
     $satisfy   = parseGetParameter($get, 'satisfy', 'a-zA-Z0-9\-_,.');
 
-    $tables[]=$GLOBALS['object'];
+    $tables[]=$GLOBALS['bodies'];
     $satisfy   = processSatisfyParameter($tables,$satisfy);
     $filters   = processFiltersParameter($tables,$satisfy,$filters);
 
     $orderings = processOrderingsParameter($orderings);
     $page      = processPageParameter($page);
-
-    if ($table!=$GLOBALS['object']) exitWith404('entity');
 
     return compact('action','tables','key','page','filters','orderings','rowData','exclude','data');
 }

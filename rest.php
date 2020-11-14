@@ -1,16 +1,17 @@
 <?php
 define("LOADED_AS_MODULE","1");
-$GLOBALS['object']='bodies';
+$GLOBALS['bodies']='bodies';
+$GLOBALS['knowed']='knowednumber';
 $GLOBALS['DEBUG']=0;
 
-$GLOBALS['API_VERSION']="1.0.1";
+$GLOBALS['API_VERSION']="1.1.0";
 
-$GLOBALS['VirtualHost']="api";
+$GLOBALS['VirtualHost']="localhost";
 if ($_SERVER['HTTP_HOST']==$GLOBALS['VirtualHost']){
     $GLOBALS['DEBUG']=1;
-    $GLOBALS['API_URL']='http://'.$_SERVER['HTTP_HOST'].'/rest/'.$GLOBALS['object'];
+    $GLOBALS['API_URL_BODIES']='http://'.$_SERVER['HTTP_HOST'].'/rest/'.$GLOBALS['bodies'];
 }else{
-    $GLOBALS['API_URL']='https://'.$_SERVER['HTTP_HOST'].'/rest/'.$GLOBALS['object'];
+    $GLOBALS['API_URL_BODIES']='https://'.$_SERVER['HTTP_HOST'].'/rest/'.$GLOBALS['bodies'];
 }
 
 include_once('include/column.php');

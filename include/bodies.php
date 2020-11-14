@@ -216,7 +216,7 @@ class Bodies implements JsonSerializable{
                     case "isPlanet":            $result+=array('isPlanet' => $this->getIsPlanet());break;
                     case "moons":               $result+=array('moons' => 'null');break;
                     case "semimajorAxis":       $result+=array('semimajorAxis' => $this->getSemimajorAxis());break;
-                    case "aroundPlanet":        $result+=array('aroundPlanet' => ($this->getAroundPlanet()<>""?array('planet' => $this->getAroundPlanet(), 'rel' => $GLOBALS['API_URL'].'/'.$this->getAroundPlanet()):null));break;
+                    case "aroundPlanet":        $result+=array('aroundPlanet' => ($this->getAroundPlanet()<>""?array('planet' => $this->getAroundPlanet(), 'rel' => $GLOBALS['API_URL_BODIES'].'/'.$this->getAroundPlanet()):null));break;
                     case "englishName":         $result+=array('englishName' => $this->getEnglishName()); break;
                     case "eccentricity":        $result+=array('eccentricity' => $this->getEccentricity());break;
                     case "discoveredBy":        $result+=array('discoveredBy' => $this->getDiscoveredBy()); break;
@@ -268,7 +268,7 @@ class Bodies implements JsonSerializable{
                     }
                     if ($isRelPresent) {
                         if ($isMoonPresent)  $result .= ',';
-                        $result .= '"rel":"' . $GLOBALS['API_URL'] . '/' . $row["CPT_CORPS"] . '"';
+                        $result .= '"rel":"' . $GLOBALS['API_URL_BODIES'] . '/' . $row["CPT_CORPS"] . '"';
                     }
                     $result .= '}';
                 }else{
@@ -278,7 +278,7 @@ class Bodies implements JsonSerializable{
                     }
                     if ($isRelPresent) {
                         if ($isMoonPresent) $result .= ',';
-                        $result .= '"' . $GLOBALS['API_URL'] . '/' . $row["CPT_CORPS"] . '"';
+                        $result .= '"' . $GLOBALS['API_URL_BODIES'] . '/' . $row["CPT_CORPS"] . '"';
                     }
                     $result .= ']';
                 }
@@ -408,7 +408,7 @@ class Bodies implements JsonSerializable{
                                 }
                                 if ($isRelPresent) {
                                     if ($isPlanetPresent) $result .= ', ';
-                                    $result .= '"rel":"' . $GLOBALS['API_URL'] . '/' . $object->getAroundPlanet() . '"';
+                                    $result .= '"rel":"' . $GLOBALS['API_URL_BODIES'] . '/' . $object->getAroundPlanet() . '"';
                                 }
                                 $result .= '}';
                             } else {
@@ -443,7 +443,7 @@ class Bodies implements JsonSerializable{
 
         $params = array();
         if (!empty($filters)) {
-             addWhereFromFilters($filters[$GLOBALS['object']],$scriptsql,$params);
+             addWhereFromFilters($filters[$GLOBALS['bodies']],$scriptsql,$params);
         }
 
         if (is_array($orderings)) {
@@ -492,7 +492,7 @@ class Bodies implements JsonSerializable{
                                 }
                                 if ($isRelPresent) {
                                     if ($isPlanetPresent)  $result .= ',';
-                                    $result .= '"rel":"' . $GLOBALS['API_URL'] . '/' . $row[$column->getColName()] . '"';
+                                    $result .= '"rel":"' . $GLOBALS['API_URL_BODIES'] . '/' . $row[$column->getColName()] . '"';
                                 }
                                 $result .= '}';
                             }else{
@@ -502,7 +502,7 @@ class Bodies implements JsonSerializable{
                                 }
                                 if ($isRelPresent) {
                                     if ($isPlanetPresent) $result .= ',';
-                                    $result .= '"' . $GLOBALS['API_URL'] . '/' . $row[$column->getColName()] . '"';
+                                    $result .= '"' . $GLOBALS['API_URL_BODIES'] . '/' . $row[$column->getColName()] . '"';
                                 }
                                 $result .= ']';
                             }
@@ -602,7 +602,7 @@ class Bodies implements JsonSerializable{
                 if (!$rowData) {
                     $result .= '"rel":';
                 }
-                $result .= '"' . $GLOBALS['API_URL'] . '/' . $row["CPT_CORPS"] . '"';
+                $result .= '"' . $GLOBALS['API_URL_BODIES'] . '/' . $row["CPT_CORPS"] . '"';
             }
             if ($rowData) {
                 $result .= ']';

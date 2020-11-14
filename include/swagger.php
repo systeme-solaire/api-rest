@@ -17,26 +17,26 @@ function swagger() {
     echo '"produces":["application/json"],';
     echo '"tags":[';
     echo '{';
-    echo '"name":"'.$GLOBALS['object'].'",';
+    echo '"name":"'.$GLOBALS['bodies'].'",';
     echo '"description":"Object with all data about the concerned body : orbitals, physicals and atmosphere"';
     echo '}';
     echo '],'; //tag
     echo '"paths":{';
-    echo '"/'.$GLOBALS['object'].'":{';
+    echo '"/'.$GLOBALS['bodies'].'":{';
 
     echo '"get":{';
-    echo '"tags":["'.$GLOBALS['object'].'"],';
+    echo '"tags":["'.$GLOBALS['bodies'].'"],';
     echo '"summary":"List",';
 
-    echoParameters();
+    echoParametersForBodies();
     echo ',';
     echo '"responses":{';
     echo '"200":{';
-    echo '"description":"An array of '.$GLOBALS['object'].'",';
+    echo '"description":"An array of '.$GLOBALS['bodies'].'",';
     echo '"schema":{';
     echo '"type": "object",';
     echo '"properties": {';
-    echo '"'.$GLOBALS['object'].'": {';
+    echo '"'.$GLOBALS['bodies'].'": {';
     echo '"type":"array",';
     echo '"items":{';
     echo '"type": "object",';
@@ -55,11 +55,11 @@ function swagger() {
     echo '}'; //solarsystem
 
 
-    echo ',"/'.$GLOBALS['object'].'/{id}":{';
+    echo ',"/'.$GLOBALS['bodies'].'/{id}":{';
     //     foreach ($table['id_actions'] as $j=>$action) {
     //          if ($j>0) echo ',';
     echo '"get":{';
-    echo '"tags":["'.$GLOBALS['object'].'"],';
+    echo '"tags":["'.$GLOBALS['bodies'].'"],';
     echo '"summary":"read",';
     echo '"parameters":[';
     echo '{';
