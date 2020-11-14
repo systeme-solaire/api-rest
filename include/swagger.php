@@ -19,7 +19,11 @@ function swagger() {
     echo '{';
     echo '"name":"'.$GLOBALS['bodies'].'",';
     echo '"description":"Object with all data about the concerned body : orbitals, physicals and atmosphere"';
-    echo '}';
+    echo '},';
+    echo '{';
+        echo '"name":"'.$GLOBALS['known'].'",';
+        echo '"description":"Number of known objects"';
+        echo '}';
     echo '],'; //tag
     echo '"paths":{';
 
@@ -27,7 +31,7 @@ function swagger() {
     echo '"get":{';
     echo '"tags":["'.$GLOBALS['bodies'].'"],';
     echo '"summary":"List",';
-    echoParametersForBodies();
+    Bodies::echoParameters();
     echo ',';
     echo '"responses":{';
     echo '"200":{';
@@ -78,24 +82,24 @@ function swagger() {
     echo '}'; //get
     echo '}'; // /'.$GLOBALS['bodies'].'/{id}
 
-    echo ',"/'.$GLOBALS['knowed'].'":{';
+    echo ',"/'.$GLOBALS['known'].'":{';
     echo '"get":{';
-    echo '"tags":["'.$GLOBALS['knowed'].'"],';
+    echo '"tags":["'.$GLOBALS['known'].'"],';
     echo '"summary":"List",';
-    echoParametersForKnowed();
+    Known::echoParameters();
     echo ',';
     echo '"responses":{';
     echo '"200":{';
-    echo '"description":"An array of '.$GLOBALS['knowed'].'",';
+    echo '"description":"An array of '.$GLOBALS['known'].'",';
     echo '"schema":{';
     echo '"type": "object",';
     echo '"properties": {';
-    echo '"'.$GLOBALS['knowed'].'": {';
+    echo '"'.$GLOBALS['known'].'": {';
     echo '"type":"array",';
     echo '"items":{';
     echo '"type": "object",';
     echo '"properties": {';
-    Knowed::getDescSwaggerColumnsForKnowed(true);
+    Known::getDescSwaggerColumnsForKnown(true);
     echo '}'; //properties
     echo '}'; //items
     echo '}'; //table
@@ -104,11 +108,11 @@ function swagger() {
     echo '}'; //200
     echo '}'; //responses
     echo '}'; //get
-    echo '}'; // /'.$GLOBALS['knowed']
+    echo '}'; // /'.$GLOBALS['known']
 
-    echo ',"/'.$GLOBALS['knowed'].'/{id}":{';
+    echo ',"/'.$GLOBALS['known'].'/{id}":{';
     echo '"get":{';
-    echo '"tags":["'.$GLOBALS['knowed'].'"],';
+    echo '"tags":["'.$GLOBALS['known'].'"],';
     echo '"summary":"read",';
     echo '"parameters":[';
     echo '{';
@@ -125,13 +129,13 @@ function swagger() {
     echo '"schema":{';
     echo '"type": "object",';
     echo '"properties": {';
-    Knowed::getDescSwaggerColumnsForKnowed(false);
+    Known::getDescSwaggerColumnsForKnown(false);
     echo '}'; //properties
     echo '}'; //schema
     echo '}'; //200
     echo '}'; //responses
     echo '}'; //get
-    echo '}'; // /'.$GLOBALS['knowed'].'/{id}
+    echo '}'; // /'.$GLOBALS['known'].'/{id}
     
     echo '}'; // path
     echo '}';

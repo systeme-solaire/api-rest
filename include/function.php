@@ -15,74 +15,6 @@ function isFilterPresent($filterName, $data, $exclude){
     return $result;
 }
 
-function echoParametersForBodies(){
-    echo '"parameters":[';
-    echo '{';
-    echo '"name":"data",';
-    echo '"in":"query",';
-    echo '"description":"The data you want to retrieve (comma separated). Example: id,semimajorAxis,isPlanet.",';
-    echo '"required":false,';
-    echo '"type":"string"';
-    echo '},';
-    echo '{';
-    echo '"name":"exclude",';
-    echo '"in":"query",';
-    echo '"description":"One or more data you want to exclude (comma separated). Example: id,isPlanet.",';
-    echo '"required":false,';
-    echo '"type":"string"';
-    echo '},';
-    echo '{';
-    echo '"name":"order",';
-    echo '"in":"query",';
-    echo '"description":"A data you want to sort on and the sort direction (comma separated). Example: id,desc. Only one data is authorized.",';
-    echo '"required":false,';
-    echo '"type":"string"';
-    echo '},';
-    echo '{';
-    echo '"name":"page",';
-    echo '"in":"query",';
-    echo '"description":"Page number (number>=1) and page size (size>=1 and 20 by default) (comma separated). NB: You cannot use \"page\" without \"order\"! Example: 1,10.",';
-    echo '"required":false,';
-    echo '"type":"string"';
-    echo '},';
-    echo '{';
-    echo '"name":"rowData",';
-    echo '"in":"query",';
-    echo '"description":"Transform the object in records. NB: This can also be done client-side in JavaScript!",';
-    echo '"required":false,';
-    echo '"type":"boolean"';
-    echo '}';
-    echo ',';
-    echo '{';
-    echo '"name":"filter[]",';
-    echo '"in":"query",';
-    echo '"description":"Filters to be applied. Each filter consists of a data, an operator and a value (comma separated). Example: id,eq,mars. Accepted operators are : cs (like) - sw (start with) - ew (end with) - eq (equal) - lt (less than) - le (less or equal than) - ge (greater or equal than) - gt (greater than) - bt (between). And all opposites operators : ncs - nsw - new - neq - nlt - nle - nge - ngt - nbt. Note : if anyone filter is invalid, all filters will be ignore.",';
-    echo '"required":false,';
-    echo '"type":"array",';
-    echo '"collectionFormat":"multi",';
-    echo '"items":{"type":"string"}';
-    echo '},';
-    echo '{';
-    echo '"name":"satisfy",';
-    echo '"in":"query",';
-    echo '"description":"Should all filters match (default)? Or any?",';
-    echo '"required":false,';
-    echo '"type":"string",';
-    echo '"enum":["any"]';
-    echo '}';
-    echo ']'; 
-}
-function echoParametersForKnowed(){
-    echo '"parameters":[';
-    echo '{';
-    echo '"name":"rowData",';
-    echo '"in":"query",';
-    echo '"description":"Transform the object in records. NB: This can also be done client-side in JavaScript!",';
-    echo '"required":false,';
-    echo '"type":"boolean"';
-    echo '}';
-    echo ']'; 
-}
 function allowOrigin($allowOrigins) {
     if (isset($_SERVER['REQUEST_METHOD'])) {
         header('Access-Control-Allow-Credentials: true');
@@ -112,13 +44,13 @@ function executeCommand($settings, $request, $method, $get) {
                 case 'headers': $output = headersCommandForBodies(); break;
                 default: $output = false;
             }
-        }elseif ($api==$GLOBALS['knowed']){
-            /* si action knowedNumber */
-            $parameters = getParametersForKnowed($settings,$request,$method,$get);
+        }elseif ($api==$GLOBALS['known']){
+            /* si action knowncount */
+            $parameters = getParametersForKnown($settings,$request,$method,$get);
             switch($parameters['action']){
-                case 'list': $output = listCommandForKnowed($parameters); break;
-                case 'read': $output = readCommandForKnowed($parameters); break;
-                case 'headers': $output = headersCommandForKnowed(); break;
+                case 'list': $output = listCommandForKnown($parameters); break;
+                case 'read': $output = readCommandForKnown($parameters); break;
+                case 'headers': $output = headersCommandForKnown(); break;
                 default: $output = false;
             }
         }else {
@@ -266,19 +198,19 @@ function readCommandForBodies($parameters) {
 }
 
 
-function listCommandForKnowed($parameters)
+function listCommandForKnown($parameters)
 {
     extract($parameters);
 
     startOutput();
   //  ob_start("ob_gzhandler");
 
-    $allColumns = Knowed::getValidColumns();
+    $allColumns = Known::getValidColumns();
     if (count($allColumns) == 0) {
         exitWith403("You need more data in data or less data in exclude");
     }
 
-    echo '{"' . $GLOBALS['knowed'] . '":';
+    echo '{"' . $GLOBALS['known'] . '":';
     if ($rowData){
         echo '{"data":';
 
@@ -304,7 +236,7 @@ function listCommandForKnowed($parameters)
     }
 
     echo '[';
-    echo Knowed::getAll($allColumns, $rowData);
+    echo Known::getAll($allColumns, $rowData);
     echo ']';
     if ($rowData){ echo '}';}
     echo '}';//fin
@@ -313,21 +245,21 @@ function listCommandForKnowed($parameters)
     return false;
 }
 
-function readCommandForKnowed($parameters) {
+function readCommandForKnown($parameters) {
     extract($parameters);
 
-    $allColumns=Knowed::getValidColumns();
+    $allColumns=Known::getValidColumns();
     if (count($allColumns)==0){
         exitWith403("no column");
     }
 
-    $object = new Knowed($key);
+    $object = new Known($key);
     if (!$object->isExists()) {
         // n'existe pas
         exitWith404('entity');
     }else {
         startOutput();
-        echo Knowed::getOne($object,$allColumns);
+        echo Known::getOne($object,$allColumns);
     }
     return false;
 }
@@ -439,13 +371,13 @@ function headersCommandForBodies() {
     echo '},';
 
     echo '"GET":{';
-    echoParametersForBodies();
+    Bodies::echoParameters();
     echo '}';
     echo '}';
     return false;
 }
 
-function headersCommandForKnowed() {
+function headersCommandForKnown() {
     $headers = array();
     $headers[]='Access-Control-Allow-Headers: Content-Type, X-XSRF-TOKEN';
     $headers[]='Access-Control-Allow-Methods: OPTIONS, GET, HEAD';
@@ -465,7 +397,7 @@ function headersCommandForKnowed() {
     echo '},';
 
     echo '"GET":{';
-    echoParametersForKnowed();
+    Known::echoParameters();
     echo '}';
     echo '}';
     return false;
@@ -723,10 +655,10 @@ function getParametersForBodies($settings,$request,$method,$get) {
 
     return compact('action','tables','key','page','filters','orderings','rowData','exclude','data');
 }
-function getParametersForKnowed($settings,$request,$method,$get) {
+function getParametersForKnown($settings,$request,$method,$get) {
     extract($settings);
 
-    $query     = parseRequestParameter($request, 'a-zA-Z0-9\-_');  // /knowednumber
+    $query     = parseRequestParameter($request, 'a-zA-Z0-9\-_');  // /knowncount
     $key       = parseRequestParameter($request, 'a-zA-Z0-9\-_,'); // auto-increment or uuid
     $action    = mapMethodToAction($method,$key);
     $rowData   = parseGetParameter($get, 'rowData', 't1');

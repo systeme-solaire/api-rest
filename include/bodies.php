@@ -653,6 +653,64 @@ class Bodies implements JsonSerializable{
         return $descColumns ;
     }
 
+    public static function echoParameters(){
+        echo '"parameters":[';
+        echo '{';
+        echo '"name":"data",';
+        echo '"in":"query",';
+        echo '"description":"The data you want to retrieve (comma separated). Example: id,semimajorAxis,isPlanet.",';
+        echo '"required":false,';
+        echo '"type":"string"';
+        echo '},';
+        echo '{';
+        echo '"name":"exclude",';
+        echo '"in":"query",';
+        echo '"description":"One or more data you want to exclude (comma separated). Example: id,isPlanet.",';
+        echo '"required":false,';
+        echo '"type":"string"';
+        echo '},';
+        echo '{';
+        echo '"name":"order",';
+        echo '"in":"query",';
+        echo '"description":"A data you want to sort on and the sort direction (comma separated). Example: id,desc. Only one data is authorized.",';
+        echo '"required":false,';
+        echo '"type":"string"';
+        echo '},';
+        echo '{';
+        echo '"name":"page",';
+        echo '"in":"query",';
+        echo '"description":"Page number (number>=1) and page size (size>=1 and 20 by default) (comma separated). NB: You cannot use \"page\" without \"order\"! Example: 1,10.",';
+        echo '"required":false,';
+        echo '"type":"string"';
+        echo '},';
+        echo '{';
+        echo '"name":"rowData",';
+        echo '"in":"query",';
+        echo '"description":"Transform the object in records. NB: This can also be done client-side in JavaScript!",';
+        echo '"required":false,';
+        echo '"type":"boolean"';
+        echo '}';
+        echo ',';
+        echo '{';
+        echo '"name":"filter[]",';
+        echo '"in":"query",';
+        echo '"description":"Filters to be applied. Each filter consists of a data, an operator and a value (comma separated). Example: id,eq,mars. Accepted operators are : cs (like) - sw (start with) - ew (end with) - eq (equal) - lt (less than) - le (less or equal than) - ge (greater or equal than) - gt (greater than) - bt (between). And all opposites operators : ncs - nsw - new - neq - nlt - nle - nge - ngt - nbt. Note : if anyone filter is invalid, all filters will be ignore.",';
+        echo '"required":false,';
+        echo '"type":"array",';
+        echo '"collectionFormat":"multi",';
+        echo '"items":{"type":"string"}';
+        echo '},';
+        echo '{';
+        echo '"name":"satisfy",';
+        echo '"in":"query",';
+        echo '"description":"Should all filters match (default)? Or any?",';
+        echo '"required":false,';
+        echo '"type":"string",';
+        echo '"enum":["any"]';
+        echo '}';
+        echo ']'; 
+    }
+
     /* le Swagger des properties */
     public static function getDescSwaggerColumnsForBodies($rel){
         $columns = Bodies::getDescColumns();

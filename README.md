@@ -33,4 +33,4 @@ L'ensemble des données sont stockées en colonne :
     - DIMENSION
     - INCLINAISON_AXE
 
-- /knowedNumber renvoie le nombre de corps de chaque catégorie (table SQL `syssol_tab_knowed`)
+- /knowncount renvoie le nombre de corps de chaque catégorie (table SQL `syssol_tab_known`)

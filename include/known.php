@@ -4,19 +4,23 @@ if (!defined("LOADED_AS_MODULE")) {
 }
 
 /* Objet du système solaire */
-class Knowed implements JsonSerializable{
-    const FIELDS = "ID, KNOWED";
-    const TABLE = "syssol_tab_knowed";
+class Known implements JsonSerializable{
+    const FIELDS = "ID, VAL, FROM_DATE";
+    const TABLE = "syssol_tab_known";
 
     protected $id;
-    protected $knowedNumber;
+    protected $knownCount;
+    protected $updateDate;
     protected $isExists;
 
     public function getId(){
         return $this->id;
     }
-    public function getKnowedNumber(){
-        return $this->knowedNumber;
+    public function getKnownCount(){
+        return $this->knownCount;
+    }
+    public function getUpdateDate(){
+        return $this->updateDate;
     }
     public function isExists(){
         return $this->isExists;
@@ -37,7 +41,8 @@ class Knowed implements JsonSerializable{
         if ($this->isExists ){
             $donnees = $result->fetch();
             $this->id = $donnees["ID"];
-            $this->knowedNumber = $donnees["KNOWED"];
+            $this->knownCount = $donnees["VAL"];
+            $this->updateDate = $donnees["FROM_DATE"];
         }
         $result->closeCursor();
 
@@ -46,8 +51,8 @@ class Knowed implements JsonSerializable{
         }
     }
 
-    public static function getDescSwaggerColumnsForKnowed($rel){
-        $columns = Knowed::getDescColumns();
+    public static function getDescSwaggerColumnsForKnown($rel){
+        $columns = Known::getDescColumns();
         $i = 0;
         foreach ($columns as $col) {
             echo '"' . $col->getColId() . '": {"type": "' . $col->getColType() . '"}';      
@@ -58,14 +63,28 @@ class Knowed implements JsonSerializable{
             echo ',"rel":{"type":"string"}';
         }
     }
+
+    public static function echoParameters(){
+        echo '"parameters":[';
+        echo '{';
+        echo '"name":"rowData",';
+        echo '"in":"query",';
+        echo '"description":"Transform the object in records. NB: This can also be done client-side in JavaScript!",';
+        echo '"required":false,';
+        echo '"type":"boolean"';
+        echo '}';
+        echo ']'; 
+    }
+
     public static function getDescColumns(){
         $descColumns[]=new Column("id", "ID", "string");
-        $descColumns[]=new Column("knowedNumber", "KNOWED", "number");
+        $descColumns[]=new Column("knownCount", "VAL", "number");
+        $descColumns[]=new Column("updateDate", "FROM_DATE", "string");
         return $descColumns ;
     }
 
     public static function getValidColumns(){
-        $allColumns = Knowed::getDescColumns();
+        $allColumns = Known::getDescColumns();
         $cleanedColumns=[];
         foreach ($allColumns as $col) {
             $cleanedColumns[] = $col;
@@ -117,6 +136,12 @@ class Knowed implements JsonSerializable{
                 if ($j<$colCount) $result.=',';
             }
 
+            $result .= ',';
+            if (!$rowData) {
+                $result .= '"rel":';
+            }
+            $result .= '"' . $GLOBALS['API_URL_KNOWN'] . '/' . $row["ID"] . '"';
+
             if ($rowData) {
                 $result .= ']';
             }else{
@@ -144,8 +169,11 @@ class Knowed implements JsonSerializable{
                     case "id":
                         $result .= '"id":"' . $object->getId() . '"';
                         break;
-                    case "knowedNumber":
-                        $result .= '"knowedNumber":' . ($object->getKnowedNumber() != 0 ? $object->getKnowedNumber() : 0) . '';
+                    case "knownCount":
+                        $result .= '"knownCount":' . ($object->getKnownCount() != 0 ? $object->getKnownCount() : 0) . '';
+                        break;
+                    case "updateDate":
+                        $result .= '"updateDate":"' . ($object->getUpdateDate() != 0 ? $object->getUpdateDate() : 0) . '"';
                         break;
                 }
                 $j++;
@@ -162,7 +190,7 @@ class Knowed implements JsonSerializable{
 
     /* Serialization de l'objet */
     public function jsonSerialize() {
-        $allColumns= Knowed::getValidColumns();
+        $allColumns= Known::getValidColumns();
 
         if ($this->getId()!==null) {
             $result = [];
@@ -170,8 +198,9 @@ class Knowed implements JsonSerializable{
             $j=0; // pour les colonnes
             foreach ($allColumns as $column) {
                 switch ($column->getColId()) {
-                    case "id":                  $result+=array('id' => $this->getId());break;
-                    case "knowedNumber":        $result+=array('knowedNumber' => $this->getKnowedNumber());break;
+                    case "id":                $result+=array('id' => $this->getId());break;
+                    case "knownCount":        $result+=array('knownCount' => $this->getKnownCount());break;
+                    case "updateDate":        $result+=array('updateDate' => $this->getUpdateDate());break;
                 }
                 $j++;
             }

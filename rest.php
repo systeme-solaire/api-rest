@@ -1,7 +1,7 @@
 <?php
 define("LOADED_AS_MODULE","1");
 $GLOBALS['bodies']='bodies';
-$GLOBALS['knowed']='knowednumber';
+$GLOBALS['known']='knowncount';
 $GLOBALS['DEBUG']=0;
 
 $GLOBALS['API_VERSION']="1.1.0";
@@ -10,14 +10,16 @@ $GLOBALS['VirtualHost']="localhost";
 if ($_SERVER['HTTP_HOST']==$GLOBALS['VirtualHost']){
     $GLOBALS['DEBUG']=1;
     $GLOBALS['API_URL_BODIES']='http://'.$_SERVER['HTTP_HOST'].'/rest/'.$GLOBALS['bodies'];
+    $GLOBALS['API_URL_KNOWN']='http://'.$_SERVER['HTTP_HOST'].'/rest/'.$GLOBALS['known'];
 }else{
     $GLOBALS['API_URL_BODIES']='https://'.$_SERVER['HTTP_HOST'].'/rest/'.$GLOBALS['bodies'];
+    $GLOBALS['API_URL_KNOWN']='https://'.$_SERVER['HTTP_HOST'].'/rest/'.$GLOBALS['known'];
 }
 
 include_once('include/column.php');
 include_once('include/dbaccess.php');
 include_once('include/bodies.php');
-include_once('include/knowed.php');
+include_once('include/known.php');
 include_once('include/swagger.php');
 include_once('include/function.php');
 
