@@ -22,7 +22,7 @@ function swagger() {
     echo '},';
     echo '{';
         echo '"name":"'.$GLOBALS['known'].'",';
-        echo '"description":"Number of known objects"';
+        echo '"description":"Count of known objects"';
         echo '}';
     echo '],'; //tag
     echo '"paths":{';
