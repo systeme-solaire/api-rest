@@ -8,7 +8,7 @@ class Bodies implements JsonSerializable{
     private $excludeColumn;
     private $limitToColumn;
 
-    const FIELDS = "CPT_CORPS, NOM, BL_PLANETE, CPTE_CORPS, NOM_ANGLAIS, DEMIGRAND_AXE, DECOUV_QUI, DECOUV_QD, DES_TEMPO, mass_val, mass_unit, density, gravity, escape, vol_val, vol_unit, perihelion, aphelion, eccentricity, inclination, equa_radius, mean_radius, polar_radius, flattening, sideral_orbit, sideral_rotation, dimension, INCLINAISON_AXE";
+    const FIELDS = "CPT_CORPS, NOM, BL_PLANETE, CPTE_CORPS, NOM_ANGLAIS, DEMIGRAND_AXE, DECOUV_QUI, DECOUV_QD, DES_TEMPO, mass_val, mass_unit, density, gravity, escape, vol_val, vol_unit, perihelion, aphelion, eccentricity, inclination, equa_radius, mean_radius, polar_radius, flattening, sideral_orbit, sideral_rotation, dimension, INCLINAISON_AXE, avg_temp, main_anomaly, arg_periapsis, long_asc_node ";
     const TABLE = "syssol_tab_donnees";
 
     protected $isExists;
@@ -41,6 +41,10 @@ class Bodies implements JsonSerializable{
     protected $volVal;
     protected $volExponent;
     protected $axialTilt;
+    protected $avgTemp;
+    protected $mainAnomaly;
+    protected $argPeriapsis;
+    protected $longAscNode;
 
     public function isExists(){
         return $this->isExists;
@@ -139,6 +143,19 @@ class Bodies implements JsonSerializable{
     public function getVolUnit(){
         return $this->volExponent;
     }
+    public function getAvg_temp(){
+        return $this->avgTemp;
+    }
+    public function getMain_anomaly(){
+        return $this->mainAnomaly;
+    }
+    public function getArg_periapsis(){
+        return $this->argPeriapsis;
+    }
+    public function getLong_asc_node(){
+        return $this->longAscNode;
+    }
+
     public function __construct($id, $limitToColumn, $excludeColumn){
         DBAccess::ConfigInit();
 
@@ -192,7 +209,10 @@ class Bodies implements JsonSerializable{
             $this->sideralOrbit = $donnees["sideral_orbit"]; 
             $this->sideralRotation = $donnees["sideral_rotation"]; 
             $this->axialTilt = $donnees["INCLINAISON_AXE"];
-
+            $this->avgTemp = $donnees["avg_temp"];
+            $this->mainAnomaly = $donnees["main_anomaly"];
+            $this->argPeriapsis = $donnees["arg_periapsis"];
+            $this->longAscNode = $donnees["long_asc_node"];
         }
         $result->closeCursor();
 
@@ -238,6 +258,10 @@ class Bodies implements JsonSerializable{
                     case "sideralOrbit":        $result+=array('sideralOrbit' => $this->getSideralOrbit());break;
                     case "sideralRotation":     $result+=array('sideralRotation' => $this->getSideralRotation());break; 
                     case "axialTilt":           $result+=array('axialTilt' => $this->getAxialTilt());break;
+                    case "avgTemp":             $result+=array('avgTemp' => $this->getAvg_temp());break;
+                    case "mainAnomaly":         $result+=array('mainAnomaly' => $this->getMain_anomaly());break;
+                    case "argPeriapsis":        $result+=array('argPeriapsis' => $this->getArg_periapsis());break;
+                    case "longAscNode":         $result+=array('longAscNode' => $this->getLong_asc_node());break;
                 }
                 $j++;
             }
@@ -357,6 +381,18 @@ class Bodies implements JsonSerializable{
                         break; 
                     case "axialTilt":          
                         $result .= '"axialTilt":' . ($object->getAxialTilt() != 0 ? $object->getAxialTilt() : 0) . '';
+                        break; 
+                    case "avgTemp":          
+                        $result .= '"avgTemp":' . ($object->getAvg_temp() != 0 ? $object->getAvg_temp() : 0) . '';
+                        break; 
+                    case "mainAnomaly":          
+                        $result .= '"mainAnomaly":' . ($object->getMain_anomaly() != 0 ? $object->getMain_anomaly() : 0) . '';
+                        break; 
+                    case "argPeriapsis":          
+                        $result .= '"argPeriapsis":' . ($object->getArg_periapsis() != 0 ? $object->getArg_periapsis() : 0) . '';
+                        break; 
+                    case "longAscNode":          
+                        $result .= '"longAscNode":' . ($object->getLong_asc_node() != 0 ? $object->getLong_asc_node() : 0) . '';
                         break; 
                     case "dimension":          
                         $result .= '"dimension":"'.$object->getDimension(). '"';
@@ -650,6 +686,11 @@ class Bodies implements JsonSerializable{
         $descColumns[]=new Column("discoveryDate", "DECOUV_QD", "string");
         $descColumns[]=new Column("alternativeName", "DES_TEMPO", "string");
         $descColumns[]=new Column("axialTilt", "INCLINAISON_AXE", "number");
+        $descColumns[]=new Column("avgTemp", "avg_temp ", "number");
+        $descColumns[]=new Column("mainAnomaly", "main_anomaly", "number");
+        $descColumns[]=new Column("argPeriapsis", "arg_periapsis", "number");
+        $descColumns[]=new Column("longAscNode", "long_asc_node", "number");
+
         return $descColumns ;
     }
 
