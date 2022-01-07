@@ -484,6 +484,9 @@ function addFilter(&$filters,$table,$and,$field,$comparator,$value) {
 }
 
 function convertFilter($field, $comparator, $value) {
+    // convert boolean value
+    if ($value=='true'){$value='-1';}
+    if ($value=='false'){$value='0';}
     // default behavior
     $comparator = strtolower($comparator);
     if ($comparator[0]!='n') {
