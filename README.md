@@ -1,36 +1,77 @@
-Le code de l'OpenData du Système Solaire présent sur https://api.le-systeme-solaire.net
+# The Solar System OpenData
 
-- /bodies expose les données des corps du Système solaire (issu d'une table SQL `syssol_tab_donnees`)
+An open Rest API for querying all Solar System data.
 
-L'ensemble des données sont stockées en colonne :
+https://api.le-systeme-solaire.net
 
-    - CPT_CORPS, 
-    - NOM, 
-    - BL_PLANETE, 
-    - CPTE_CORPS, 
-    - NOM_ANGLAIS, 
-    - DEMIGRAND_AXE, 
-    - DECOUV_QUI, 
-    - DECOUV_QD, 
-    - DES_TEMPO, 
-    - MASS_VAL, 
-    - MASS_UNIT, 
-    - DENSITY, 
-    - GRAVITY, 
-    - ESCAPE, 
-    - VOL_VAL, 
-    - VOL_UNIT, 
-    - PERIHELION, 
-    - APHELION, 
-    - ECCENTRICITY, 
-    - INCLINATION, 
-    - EQUA_RADIUS, 
-    - MEAN_RADIUS, 
-    - POLAR_RADIUS, 
-    - FLATTENING, 
-    - SIDERAL_ORBIT, 
-    - SIDERAL_ROTATION, 
-    - DIMENSION
-    - INCLINAISON_AXE
+# Features
 
-- /knowncount renvoie le nombre de corps de chaque catégorie (table SQL `syssol_tab_known`)
+## Main bodies
+
+All planets and their moons, all dwarfs planets and the main asteroids.
+
+## Physical characteristics
+
+Dimensions, mass, flattening, gravity, inclination and temperature.
+
+## Orbital parameters
+
+Semimajor axis, perihelion, aphelion, eccentricity, orbital period and orbital speed.
+
+## History
+
+Discovery circumstances, discoverer(s), year discovered and provisional designation.
+
+## Family
+
+For every body, all its satellites and the ability to navigate between satellites and the star.
+
+## Known objects count
+
+Known count of each object type : planets, moons, asteroids, comets.
+
+# Documentation
+
+How to use the API?
+
+## All bodies in one request
+
+An URL returns all bodies in the database with all data:
+`https://api.le-systeme-solaire.net/rest/bodies/`
+
+## Boby by body
+
+An URL returns all data of one body:
+`https://api.le-systeme-solaire.net/rest/bodies/{id}`
+
+## All known count
+
+An URL returns all known count for each object type :
+`https://api.le-systeme-solaire.net/rest/knowncount/`
+
+## Known count, object type by object type
+
+An URL returns known count for the object type :
+`https://api.le-systeme-solaire.net/rest/knowncount/{id}`
+
+## API parameters for /bodies
+
+|#| 	Parameter   |	Action                                          |
+|-|-----------------|---------------------------------------------------|
+|1| 	data        | 	The data you want to retrieve (comma separated).|
+|2| 	exclude 	|One or more data you want to exclude (comma separated).|
+|3| 	order 	|The sort order data you want to use and the sort direction (comma separated).|
+|4| 	page 	|Page number (number>=1) and page size (size>=1 with 20 as default) (comma separated).|
+|5| 	rowData 	|Transform the objects in records.|
+|6| 	filter[] 	|Filters to be applied. Each filter consists of a data, an operator and a value (comma separated).|
+|7| 	satisfy 	|Should all filters match (default).|
+
+## API parameters /knowncount
+
+|#| 	Parameter |	Action|
+|-|---------------|-------|
+|1| 	rowData 	|Transform the objects in records.|
+
+# License
+
+Distributed under MIT license. 
