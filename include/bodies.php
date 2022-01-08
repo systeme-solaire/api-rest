@@ -630,7 +630,7 @@ class Bodies implements JsonSerializable{
                         }
                         break;
                     case "moons":
-                        if ($row["BL_PLANETE"] != 0){
+                        if ($row["BL_PLANETE"] == -1 || $row["BL_PLANETE_NAINE"]=='-1' || $row["BL_ASTEROIDE"] =='-1'){
                             $result .= Bodies::getSatellite($row["CPT_CORPS"], $rowData, $isRelPresent, $isMoonPresent);
                         }else{
                             $result .= "null";
