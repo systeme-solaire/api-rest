@@ -8,7 +8,7 @@ class Bodies implements JsonSerializable{
     private $excludeColumn;
     private $limitToColumn;
 
-    const FIELDS = "CPT_CORPS, NOM, BL_PLANETE, CPTE_CORPS, NOM_ANGLAIS, DEMIGRAND_AXE, DECOUV_QUI, DECOUV_QD, DES_TEMPO, mass_val, mass_unit, density, gravity, escape, vol_val, vol_unit, perihelion, aphelion, eccentricity, inclination, equa_radius, mean_radius, polar_radius, flattening, sideral_orbit, sideral_rotation, dimension, INCLINAISON_AXE, avg_temp, main_anomaly, arg_periapsis, long_asc_node ";
+    const FIELDS = "CPT_CORPS, NOM, BL_PLANETE, CPTE_CORPS, NOM_ANGLAIS, DEMIGRAND_AXE, DECOUV_QUI, DECOUV_QD, DES_TEMPO, mass_val, mass_unit, density, gravity, escape, vol_val, vol_unit, perihelion, aphelion, eccentricity, inclination, equa_radius, mean_radius, polar_radius, flattening, sideral_orbit, sideral_rotation, dimension, INCLINAISON_AXE, avg_temp, main_anomaly, arg_periapsis, long_asc_node, BL_PLANETE, BL_PLANETE_NAINE, BL_SATELLITE, BL_ASTEROIDE, BL_SAT_ASTERO, BL_TNO, BL_SAT_TNO, BL_COMETE ";
     const TABLE = "syssol_tab_donnees";
 
     protected $isExists;
@@ -45,6 +45,7 @@ class Bodies implements JsonSerializable{
     protected $mainAnomaly;
     protected $argPeriapsis;
     protected $longAscNode;
+    protected $bodyType;
 
     public function isExists(){
         return $this->isExists;
@@ -155,7 +156,10 @@ class Bodies implements JsonSerializable{
     public function getLong_asc_node(){
         return $this->longAscNode;
     }
-
+    public function getBodyType(){
+        return $this->bodyType;
+    }
+    
     public function __construct($id, $limitToColumn, $excludeColumn){
         DBAccess::ConfigInit();
 
@@ -213,6 +217,22 @@ class Bodies implements JsonSerializable{
             $this->mainAnomaly = $donnees["main_anomaly"];
             $this->argPeriapsis = $donnees["arg_periapsis"];
             $this->longAscNode = $donnees["long_asc_node"];
+            if ($donnees["BL_PLANETE"]=='-1'){
+                $this->bodyType = 'Planet';
+            }elseif ($donnees["BL_PLANETE_NAINE"]=='-1'){
+                $this->bodyType = 'Dwarf Planet';
+            }elseif ($donnees["BL_SATELLITE"] =='-1' or $donnees["BL_SAT_ASTERO"]=='-1' or $donnees["BL_SAT_TNO"]=='-1'){
+                $this->bodyType = 'Moon';
+            }elseif ($donnees["BL_ASTEROIDE"] =='-1' or $donnees["BL_TNO"]=='-1'){
+                $this->bodyType = 'Asteroid';
+            }elseif ($donnees["BL_COMETE"]=='-1'){
+                $this->bodyType = 'Comet';
+            }elseif ($donnees["CPT_CORPS"]=='soleil'){
+                $this->bodyType = 'Star';
+            }else{
+                $this->bodyType = '';
+            }
+            
         }
         $result->closeCursor();
 
@@ -262,6 +282,7 @@ class Bodies implements JsonSerializable{
                     case "mainAnomaly":         $result+=array('mainAnomaly' => $this->getMain_anomaly());break;
                     case "argPeriapsis":        $result+=array('argPeriapsis' => $this->getArg_periapsis());break;
                     case "longAscNode":         $result+=array('longAscNode' => $this->getLong_asc_node());break;
+                    case "bodyType":            $result+=array('bodyType' => $this->getBodyType());break;
                 }
                 $j++;
             }
@@ -460,6 +481,9 @@ class Bodies implements JsonSerializable{
                     case "alternativeName":
                         $result .= '"alternativeName":"' . $object->getAlternativeName() . '"';
                         break;
+                    case "bodyType":
+                        $result .= '"bodyType":"' . $object->getBodyType() . '"';
+                        break;
                 }
                 $j++;
                 if ($j < count($allColumns)) {
@@ -612,6 +636,23 @@ class Bodies implements JsonSerializable{
                             $result .= "null";
                         }
                         break;
+                    case "bodyType":
+                        if ($row["BL_PLANETE"]=='-1'){
+                            $result .= '"Planet"';
+                        }elseif ($row["BL_PLANETE_NAINE"]=='-1'){
+                            $result .= '"Dwarf Planet"';
+                        }elseif ($row["BL_SATELLITE"] =='-1' or $row["BL_SAT_ASTERO"]=='-1' or $row["BL_SAT_TNO"]=='-1'){
+                            $result .= '"Moon"';
+                        }elseif ($row["BL_ASTEROIDE"] =='-1' or $row["BL_TNO"]=='-1'){
+                            $result .= '"Asteroid"';
+                        }elseif ($row["BL_COMETE"]=='-1'){
+                            $result .= '"Comet"';
+                        }elseif ($row["CPT_CORPS"]=='soleil'){
+                            $result .= '"Star"';
+                        }else{
+                            $result .= '""';
+                        }
+                        break;
                     default:
                         switch ($column->getColType()) {
                             case "string":
@@ -690,6 +731,7 @@ class Bodies implements JsonSerializable{
         $descColumns[]=new Column("mainAnomaly", "main_anomaly", "number");
         $descColumns[]=new Column("argPeriapsis", "arg_periapsis", "number");
         $descColumns[]=new Column("longAscNode", "long_asc_node", "number");
+        $descColumns[]=new Column("bodyType", "", "string");
 
         return $descColumns ;
     }
