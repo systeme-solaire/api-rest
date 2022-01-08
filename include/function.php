@@ -63,8 +63,7 @@ function executeCommand($settings, $request, $method, $get) {
     }
 }
 
-function listCommandForBodies($parameters)
-{
+function listCommandForBodies($parameters){
     extract($parameters);
 
     startOutput();
@@ -557,8 +556,8 @@ function addWhereFromFilters($filters,&$sql,&$params) {
             $sql .= $i==0?'':' OR ';
             $sql .= $filter[0];
 
-            for ($i=1;$i<count($filter);$i++) {
-                if ($i==1){
+            for ($j=1;$j<count($filter);$j++) {
+                if ($j==1){
                     //convert id to column name
                     foreach($descCol as $col) {
                         if ($col->getColId() == $filter[1]) {
@@ -571,7 +570,7 @@ function addWhereFromFilters($filters,&$sql,&$params) {
                     }
 
                 }else {
-                    $params[] = "'".$filter[$i]."'";
+                    $params[] = "'".$filter[$j]."'";
                 }
             }
 
@@ -602,8 +601,8 @@ function addWhereFromFilters($filters,&$sql,&$params) {
             $sql .= $filter[0];
 
             $find=false;
-            for ($i=1;$i<count($filter);$i++) {
-                if ($i==1){
+            for ($j=1;$j<count($filter);$j++) {
+                if ($j==1){
                     //convert id to column name
                     foreach($descCol as $col) {
                         if ($col->getColId() == $filter[1]) {
@@ -616,7 +615,7 @@ function addWhereFromFilters($filters,&$sql,&$params) {
                         $params[]=$orderName;
                     }
                 }else {
-                    $params[] = "'".$filter[$i]."'";
+                    $params[] = "'".$filter[$j]."'";
                 }
             }
             $first = false;

@@ -733,6 +733,11 @@ class Bodies implements JsonSerializable{
         $descColumns[]=new Column("longAscNode", "long_asc_node", "number");
         $descColumns[]=new Column("bodyType", "", "string");
 
+        $descColumns[]=new Column("massExponent","mass_unit","number");
+        $descColumns[]=new Column("massValue","mass_val","number");
+        $descColumns[]=new Column("volValue","vol_val","number");
+        $descColumns[]=new Column("volExponent","vol_unit","number");
+
         return $descColumns ;
     }
 
