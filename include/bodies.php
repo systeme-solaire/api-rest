@@ -630,7 +630,7 @@ class Bodies implements JsonSerializable{
                         }
                         break;
                     case "moons":
-                        if ($row["BL_PLANETE"] == -1 || $row["BL_PLANETE_NAINE"]=='-1' || $row["BL_ASTEROIDE"] =='-1'){
+                        if ($row["BL_PLANETE"] == -1 || $row["BL_PLANETE_NAINE"]=='-1' || $row["BL_ASTEROIDE"] =='-1' || $row["BL_TNO"]=='-1'){
                             $result .= Bodies::getSatellite($row["CPT_CORPS"], $rowData, $isRelPresent, $isMoonPresent);
                         }else{
                             $result .= "null";
@@ -641,9 +641,9 @@ class Bodies implements JsonSerializable{
                             $result .= '"Planet"';
                         }elseif ($row["BL_PLANETE_NAINE"]=='-1'){
                             $result .= '"Dwarf Planet"';
-                        }elseif ($row["BL_SATELLITE"] =='-1' or $row["BL_SAT_ASTERO"]=='-1' or $row["BL_SAT_TNO"]=='-1'){
+                        }elseif ($row["BL_SATELLITE"] =='-1' || $row["BL_SAT_ASTERO"]=='-1' || $row["BL_SAT_TNO"]=='-1'){
                             $result .= '"Moon"';
-                        }elseif ($row["BL_ASTEROIDE"] =='-1' or $row["BL_TNO"]=='-1'){
+                        }elseif ($row["BL_ASTEROIDE"] =='-1' || $row["BL_TNO"]=='-1'){
                             $result .= '"Asteroid"';
                         }elseif ($row["BL_COMETE"]=='-1'){
                             $result .= '"Comet"';
