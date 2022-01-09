@@ -8,7 +8,7 @@ class Bodies implements JsonSerializable{
     private $excludeColumn;
     private $limitToColumn;
 
-    const FIELDS = "CPT_CORPS, NOM, BL_PLANETE, CPTE_CORPS, NOM_ANGLAIS, DEMIGRAND_AXE, DECOUV_QUI, DECOUV_QD, DES_TEMPO, mass_val, mass_unit, density, gravity, escape, vol_val, vol_unit, perihelion, aphelion, eccentricity, inclination, equa_radius, mean_radius, polar_radius, flattening, sideral_orbit, sideral_rotation, dimension, INCLINAISON_AXE, avg_temp, main_anomaly, arg_periapsis, long_asc_node, BL_PLANETE, BL_PLANETE_NAINE, BL_SATELLITE, BL_ASTEROIDE, BL_SAT_ASTERO, BL_TNO, BL_SAT_TNO, BL_COMETE, bodyType ";
+    const FIELDS = "CPT_CORPS, NOM, BL_PLANETE, CPTE_CORPS, NOM_ANGLAIS, semimajor, DECOUV_QUI, DECOUV_QD, DES_TEMPO, mass_val, mass_unit, density, gravity, escape, vol_val, vol_unit, perihelion, aphelion, eccentricity, inclination, equa_radius, mean_radius, polar_radius, flattening, sideral_orbit, sideral_rotation, dimension, INCLINAISON_AXE, avg_temp, main_anomaly, arg_periapsis, long_asc_node, BL_PLANETE, BL_PLANETE_NAINE, BL_SATELLITE, BL_ASTEROIDE, BL_SAT_ASTERO, BL_TNO, BL_SAT_TNO, BL_COMETE, bodyType ";
     const TABLE = "syssol_tab_donnees";
 
     protected $isExists;
@@ -188,7 +188,7 @@ class Bodies implements JsonSerializable{
             $this->id = $donnees["CPT_CORPS"];
             $this->name = $donnees["NOM"];
             $this->isPlanet = $donnees["BL_PLANETE"];
-            $this->semimajorAxis = $donnees["DEMIGRAND_AXE"];
+            $this->semimajorAxis = $donnees["semimajor"];
             $this->aroundPlanet = $donnees["CPTE_CORPS"];
             $this->englishName = $donnees["NOM_ANGLAIS"];
             $this->eccentricity = $donnees["eccentricity"];
@@ -678,7 +678,7 @@ class Bodies implements JsonSerializable{
         $descColumns[]=new Column("englishName", "NOM_ANGLAIS", "string");
         $descColumns[]=new Column("isPlanet", "BL_PLANETE", "boolean");
         $descColumns[]=new Column("moons", "", "");
-        $descColumns[]=new Column("semimajorAxis", "DEMIGRAND_AXE", "number");
+        $descColumns[]=new Column("semimajorAxis", "semimajor", "number");
         $descColumns[]=new Column("perihelion", "perihelion", "number");
         $descColumns[]=new Column("aphelion", "aphelion", "number");
         $descColumns[]=new Column("eccentricity", "eccentricity", "number");
