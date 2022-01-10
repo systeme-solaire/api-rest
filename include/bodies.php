@@ -705,14 +705,17 @@ class Bodies implements JsonSerializable{
         $descColumns[]=new Column("argPeriapsis", "arg_periapsis", "number");
         $descColumns[]=new Column("longAscNode", "long_asc_node", "number");
         $descColumns[]=new Column("bodyType", "bodyType", "string");
-    //    $descColumns[]=new Column("massExponent","mass_unit","number"); // Warning note présent in result, exclude when use getDescColumns()
-    //    $descColumns[]=new Column("massValue","mass_val","number");     // Warning note présent in result, exclude when use getDescColumns()
-    //    $descColumns[]=new Column("volValue","vol_val","number");       // Warning note présent in result, exclude when use getDescColumns()
-    //    $descColumns[]=new Column("volExponent","vol_unit","number");   // Warning note présent in result, exclude when use getDescColumns()
-
         return $descColumns ;
     }
-
+    //all columns available for WHERE and ORDER
+    public static function getSQLColumns(){
+        $sqlColumns=Bodies::getDescColumns();
+        $sqlColumns[]=new Column("massExponent","mass_unit","number"); // Warning note présent in result, exclude when use getDescColumns()
+        $sqlColumns[]=new Column("massValue","mass_val","number");     // Warning note présent in result, exclude when use getDescColumns()
+        $sqlColumns[]=new Column("volValue","vol_val","number");       // Warning note présent in result, exclude when use getDescColumns()
+        $sqlColumns[]=new Column("volExponent","vol_unit","number");   // Warning note présent in result, exclude when use getDescColumns()
+        return $sqlColumns ;
+    }
     public static function echoParameters(){
         echo '"parameters":[';
         echo '{';

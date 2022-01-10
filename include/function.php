@@ -416,7 +416,7 @@ function processOrderingsParameter($orderings) {
 
 
         //convert id to column name
-        $descCol=Bodies::getDescColumns();
+        $descCol=Bodies::getSQLColumns();
         $find=false;
         foreach($descCol as $col) {
             if ($col->getColId() == $order[0]) {
@@ -528,7 +528,7 @@ function convertFilter($field, $comparator, $value) {
 
 function addWhereFromFilters($filters,&$sql,&$params) {
     $first = true;
-    $descCol=Bodies::getDescColumns();
+    $descCol=Bodies::getSQLColumns();
             
     if (isset($filters['or'])) {
         //validation des filres
