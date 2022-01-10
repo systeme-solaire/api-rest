@@ -473,7 +473,7 @@ class Bodies implements JsonSerializable{
                             break;
                     }
                     $j++;
-                    if ($j < count($allColumns)-4) { // exclude 'massExponent' 'massValue' 'volValue' 'volExponent'
+                    if ($j < count($allColumns)) { // exclude 'massExponent' 'massValue' 'volValue' 'volExponent'
                         $result .= ',';
                     }
                 }
@@ -643,7 +643,7 @@ class Bodies implements JsonSerializable{
 
                     }
                     $j++;
-                    if ($j<$colCount-4) $result.=',';// exclude 'massExponent' 'massValue' 'volValue' 'volExponent'
+                    if ($j<$colCount) $result.=',';// exclude 'massExponent' 'massValue' 'volValue' 'volExponent'
                 }
             }
 
@@ -705,10 +705,10 @@ class Bodies implements JsonSerializable{
         $descColumns[]=new Column("argPeriapsis", "arg_periapsis", "number");
         $descColumns[]=new Column("longAscNode", "long_asc_node", "number");
         $descColumns[]=new Column("bodyType", "bodyType", "string");
-        $descColumns[]=new Column("massExponent","mass_unit","number"); // Warning note présent in result, exclude when use getDescColumns()
-        $descColumns[]=new Column("massValue","mass_val","number");     // Warning note présent in result, exclude when use getDescColumns()
-        $descColumns[]=new Column("volValue","vol_val","number");       // Warning note présent in result, exclude when use getDescColumns()
-        $descColumns[]=new Column("volExponent","vol_unit","number");   // Warning note présent in result, exclude when use getDescColumns()
+    //    $descColumns[]=new Column("massExponent","mass_unit","number"); // Warning note présent in result, exclude when use getDescColumns()
+    //    $descColumns[]=new Column("massValue","mass_val","number");     // Warning note présent in result, exclude when use getDescColumns()
+    //    $descColumns[]=new Column("volValue","vol_val","number");       // Warning note présent in result, exclude when use getDescColumns()
+    //    $descColumns[]=new Column("volExponent","vol_unit","number");   // Warning note présent in result, exclude when use getDescColumns()
 
         return $descColumns ;
     }
@@ -795,7 +795,7 @@ class Bodies implements JsonSerializable{
                         break;
                 }
                 $i++;
-                if ($i < count($columns) - 4) echo ','; // exclude 'massExponent' 'massValue' 'volValue' 'volExponent'
+                if ($i < count($columns) ) echo ','; // exclude 'massExponent' 'massValue' 'volValue' 'volExponent'
             }
         }
         if ($rel) {

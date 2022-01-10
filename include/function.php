@@ -406,9 +406,10 @@ function processOrderingsParameter($orderings) {
     if (!$orderings) return false;
 
     foreach ($orderings as  $order) {
+
         $order = explode(",",$order);
 
-        if (count($orderings)<2) $order[1]='ASC';
+        if (count($order)<2) $order[1]='ASC';
 
         if (empty($order[1])) $order[1]='ASC';
         if (!strlen($order[0])) return false;
@@ -431,7 +432,6 @@ function processOrderingsParameter($orderings) {
         if (in_array($direction,array('ASC','DESC'))) {
             $order[1] = $direction;
         }
-
     }
     if (!$find){
         $order=null;
