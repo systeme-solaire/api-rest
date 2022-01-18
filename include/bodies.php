@@ -334,148 +334,146 @@ class Bodies implements JsonSerializable{
         if ($object->getId()!==null) {
             $j=0; // pour les colonnes
             foreach ($allColumns as $column) {
-                if ($column->getColId() != 'massExponent'&& $column->getColId()!='massValue' && $column->getColId()!='volValue' && $column->getColId()!='volExponent'){
-                    switch ($column->getColId()) {
-                        case "id":
-                            $result .= '"id":"' . $object->getId() . '"';
-                            break;
-                        case "name":
-                            $result .= '"name":"' . $object->getName() . '"';
-                            break;
-                        case "englishName":
-                            $result .= '"englishName":"' . $object->getEnglishName() . '"';
-                            break;
-                        case "isPlanet":
-                            $result .= '"isPlanet":' . ($object->getIsPlanet() == 0 ? 'false' : 'true') . '';
-                            break;
-                        case "moons":
-                            $result .= '"moons":'.Bodies::getSatellite($object->getId(), false, $isRelPresent, $isMoonPresent);
-                            break;
-                        case "semimajorAxis":
-                            $result .= '"semimajorAxis":' . ($object->getSemimajorAxis() != 0 ? $object->getSemimajorAxis() : 0) . '';
-                            break;
-                        case "perihelion":
-                            $result .= '"perihelion":' . ($object->getPerihelion() != 0 ? $object->getPerihelion() : 0) . '';
-                            break;
-                        case "aphelion":
-                            $result .= '"aphelion":' . ($object->getAphelion() != 0 ? $object->getAphelion() : 0) . '';
-                            break;
-                        case "eccentricity":
-                            $result .= '"eccentricity":' . ($object->getEccentricity() != 0 ? $object->getEccentricity() : 0) . '';
-                            break;
-                        case "inclination":
-                            $result .= '"inclination":' . ($object->getInclination() != 0 ? $object->getInclination() : 0) . '';         
-                            break;
-                        case "density":             
-                            $result .= '"density":' . ($object->getDensity() != 0 ? $object->getDensity() : 0) . '';
-                            break; 
-                        case "gravity":            
-                            $result .= '"gravity":' . ($object->getGravity() != 0 ? $object->getGravity() : 0) . '';
-                            break; 
-                        case "escape":              
-                            $result .= '"escape":' . ($object->getEscape() != 0 ? $object->getEscape() : 0) . '';
-                            break; 
-                        case "meanRadius":          
-                            $result .= '"meanRadius":' . ($object->getMeanRadius() != 0 ? $object->getMeanRadius() : 0) . '';
-                            break; 
-                        case "equaRadius":          
-                            $result .= '"equaRadius":' . ($object->getEquaRadius() != 0 ? $object->getEquaRadius() : 0) . '';
-                            break;
-                        case "polarRadius":         
-                            $result .= '"polarRadius":' . ($object->getPolarRadius() != 0 ? $object->getPolarRadius() : 0) . '';
-                            break; 
-                        case "flattening":          
-                            $result .= '"flattening":' . ($object->getFlattening() != 0 ? $object->getFlattening() : 0) . '';
-                            break; 
-                        case "axialTilt":          
-                            $result .= '"axialTilt":' . ($object->getAxialTilt() != 0 ? $object->getAxialTilt() : 0) . '';
-                            break; 
-                        case "avgTemp":          
-                            $result .= '"avgTemp":' . ($object->getAvg_temp() != 0 ? $object->getAvg_temp() : 0) . '';
-                            break; 
-                        case "mainAnomaly":          
-                            $result .= '"mainAnomaly":' . ($object->getMain_anomaly() != 0 ? $object->getMain_anomaly() : 0) . '';
-                            break; 
-                        case "argPeriapsis":          
-                            $result .= '"argPeriapsis":' . ($object->getArg_periapsis() != 0 ? $object->getArg_periapsis() : 0) . '';
-                            break; 
-                        case "longAscNode":          
-                            $result .= '"longAscNode":' . ($object->getLong_asc_node() != 0 ? $object->getLong_asc_node() : 0) . '';
-                            break; 
-                        case "dimension":          
-                            $result .= '"dimension":"'.$object->getDimension(). '"';
-                            break; 
-                        case "sideralOrbit":       
-                            $result .= '"sideralOrbit":' . ($object->getSideralOrbit() != 0 ? $object->getSideralOrbit() : 0) . '';
-                            break;
-                        case "sideralRotation":     
-                            $result .= '"sideralRotation":' . ($object->getSideralRotation() != 0 ? $object->getSideralRotation() : 0) . '';
-                            break; 
-                        case "mass":
-                            $result .= '"mass":';
-                            if ($object->getMassVal() <> 0) {
+                switch ($column->getColId()) {
+                    case "id":
+                        $result .= '"id":"' . $object->getId() . '"';
+                        break;
+                    case "name":
+                        $result .= '"name":"' . $object->getName() . '"';
+                        break;
+                    case "englishName":
+                        $result .= '"englishName":"' . $object->getEnglishName() . '"';
+                        break;
+                    case "isPlanet":
+                        $result .= '"isPlanet":' . ($object->getIsPlanet() == 0 ? 'false' : 'true') . '';
+                        break;
+                    case "moons":
+                        $result .= '"moons":'.Bodies::getSatellite($object->getId(), false, $isRelPresent, $isMoonPresent);
+                        break;
+                    case "semimajorAxis":
+                        $result .= '"semimajorAxis":' . ($object->getSemimajorAxis() != 0 ? $object->getSemimajorAxis() : 0) . '';
+                        break;
+                    case "perihelion":
+                        $result .= '"perihelion":' . ($object->getPerihelion() != 0 ? $object->getPerihelion() : 0) . '';
+                        break;
+                    case "aphelion":
+                        $result .= '"aphelion":' . ($object->getAphelion() != 0 ? $object->getAphelion() : 0) . '';
+                        break;
+                    case "eccentricity":
+                        $result .= '"eccentricity":' . ($object->getEccentricity() != 0 ? $object->getEccentricity() : 0) . '';
+                        break;
+                    case "inclination":
+                        $result .= '"inclination":' . ($object->getInclination() != 0 ? $object->getInclination() : 0) . '';         
+                        break;
+                    case "density":             
+                        $result .= '"density":' . ($object->getDensity() != 0 ? $object->getDensity() : 0) . '';
+                        break; 
+                    case "gravity":            
+                        $result .= '"gravity":' . ($object->getGravity() != 0 ? $object->getGravity() : 0) . '';
+                        break; 
+                    case "escape":              
+                        $result .= '"escape":' . ($object->getEscape() != 0 ? $object->getEscape() : 0) . '';
+                        break; 
+                    case "meanRadius":          
+                        $result .= '"meanRadius":' . ($object->getMeanRadius() != 0 ? $object->getMeanRadius() : 0) . '';
+                        break; 
+                    case "equaRadius":          
+                        $result .= '"equaRadius":' . ($object->getEquaRadius() != 0 ? $object->getEquaRadius() : 0) . '';
+                        break;
+                    case "polarRadius":         
+                        $result .= '"polarRadius":' . ($object->getPolarRadius() != 0 ? $object->getPolarRadius() : 0) . '';
+                        break; 
+                    case "flattening":          
+                        $result .= '"flattening":' . ($object->getFlattening() != 0 ? $object->getFlattening() : 0) . '';
+                        break; 
+                    case "axialTilt":          
+                        $result .= '"axialTilt":' . ($object->getAxialTilt() != 0 ? $object->getAxialTilt() : 0) . '';
+                        break; 
+                    case "avgTemp":          
+                        $result .= '"avgTemp":' . ($object->getAvg_temp() != 0 ? $object->getAvg_temp() : 0) . '';
+                        break; 
+                    case "mainAnomaly":          
+                        $result .= '"mainAnomaly":' . ($object->getMain_anomaly() != 0 ? $object->getMain_anomaly() : 0) . '';
+                        break; 
+                    case "argPeriapsis":          
+                        $result .= '"argPeriapsis":' . ($object->getArg_periapsis() != 0 ? $object->getArg_periapsis() : 0) . '';
+                        break; 
+                    case "longAscNode":          
+                        $result .= '"longAscNode":' . ($object->getLong_asc_node() != 0 ? $object->getLong_asc_node() : 0) . '';
+                        break; 
+                    case "dimension":          
+                        $result .= '"dimension":"'.$object->getDimension(). '"';
+                        break; 
+                    case "sideralOrbit":       
+                        $result .= '"sideralOrbit":' . ($object->getSideralOrbit() != 0 ? $object->getSideralOrbit() : 0) . '';
+                        break;
+                    case "sideralRotation":     
+                        $result .= '"sideralRotation":' . ($object->getSideralRotation() != 0 ? $object->getSideralRotation() : 0) . '';
+                        break; 
+                    case "mass":
+                        $result .= '"mass":';
+                        if ($object->getMassVal() <> 0) {
+                            $result .= '{';
+                            if ($isMassValuePresent) {
+                                $result .= '"massValue":' . $object->getMassVal() ;
+                            }
+                            if ($isMassExpPresent) {
+                                if ($isMassValuePresent) $result .= ', ';
+                                $result .= '"massExponent":' . $object->getMassExponent();
+                            }
+                            $result .= '}';
+                        } else {
+                            $result .= 'null';
+                        }
+                        break;
+                    case "vol":
+                        $result .= '"vol":';
+                        if ($object->getMassVal() <> 0) {
+                            $result .= '{';
+                            if ($isVolValuePresent) {
+                                $result .= '"volValue":' . $object->getVolVal() ;
+                            }
+                            if ($isVolExpPresent) {
+                                if ($isVolValuePresent) $result .= ', ';
+                                $result .= '"volExponent":' . $object->getVolExponent();
+                            }
+                            $result .= '}';
+                        } else {
+                            $result .= 'null';
+                        }
+                        break;
+                    case "aroundPlanet":
+                            $result .= '"aroundPlanet":';
+                            if ($object->getAroundPlanet() <> "") {
                                 $result .= '{';
-                                if ($isMassValuePresent) {
-                                    $result .= '"massValue":' . $object->getMassVal() ;
+                                if ($isPlanetPresent) {
+                                    $result .= '"planet":"' . $object->getAroundPlanet() . '"';
                                 }
-                                if ($isMassExpPresent) {
-                                    if ($isMassValuePresent) $result .= ', ';
-                                    $result .= '"massExponent":' . $object->getMassExponent();
+                                if ($isRelPresent) {
+                                    if ($isPlanetPresent) $result .= ', ';
+                                    $result .= '"rel":"' . $GLOBALS['API_URL_BODIES'] . '/' . $object->getAroundPlanet() . '"';
                                 }
                                 $result .= '}';
                             } else {
                                 $result .= 'null';
                             }
-                            break;
-                        case "vol":
-                            $result .= '"vol":';
-                            if ($object->getMassVal() <> 0) {
-                                $result .= '{';
-                                if ($isVolValuePresent) {
-                                    $result .= '"volValue":' . $object->getVolVal() ;
-                                }
-                                if ($isVolExpPresent) {
-                                    if ($isVolValuePresent) $result .= ', ';
-                                    $result .= '"volExponent":' . $object->getVolExponent();
-                                }
-                                $result .= '}';
-                            } else {
-                                $result .= 'null';
-                            }
-                            break;
-                        case "aroundPlanet":
-                                $result .= '"aroundPlanet":';
-                                if ($object->getAroundPlanet() <> "") {
-                                    $result .= '{';
-                                    if ($isPlanetPresent) {
-                                        $result .= '"planet":"' . $object->getAroundPlanet() . '"';
-                                    }
-                                    if ($isRelPresent) {
-                                        if ($isPlanetPresent) $result .= ', ';
-                                        $result .= '"rel":"' . $GLOBALS['API_URL_BODIES'] . '/' . $object->getAroundPlanet() . '"';
-                                    }
-                                    $result .= '}';
-                                } else {
-                                    $result .= 'null';
-                                }
-                            break;
-                        case "discoveredBy":
-                            $result .= '"discoveredBy":"' . $object->getDiscoveredBy() . '"';
-                            break;
-                        case "discoveryDate":
-                            $result .= '"discoveryDate":"' . $object->getDiscoveryDate() . '"';
-                            break;
-                        case "alternativeName":
-                            $result .= '"alternativeName":"' . $object->getAlternativeName() . '"';
-                            break;
-                        case "bodyType":
-                            $result .= '"bodyType":"' . $object->getBodyType() . '"';
-                            break;
-                    }
-                    $j++;
-                    if ($j < count($allColumns)) { // exclude 'massExponent' 'massValue' 'volValue' 'volExponent'
-                        $result .= ',';
-                    }
+                        break;
+                    case "discoveredBy":
+                        $result .= '"discoveredBy":"' . $object->getDiscoveredBy() . '"';
+                        break;
+                    case "discoveryDate":
+                        $result .= '"discoveryDate":"' . $object->getDiscoveryDate() . '"';
+                        break;
+                    case "alternativeName":
+                        $result .= '"alternativeName":"' . $object->getAlternativeName() . '"';
+                        break;
+                    case "bodyType":
+                        $result .= '"bodyType":"' . $object->getBodyType() . '"';
+                        break;
+                }
+                $j++;
+                if ($j < count($allColumns)) { // exclude 'massExponent' 'massValue' 'volValue' 'volExponent'
+                    $result .= ',';
                 }
             }
         }else{
@@ -643,7 +641,7 @@ class Bodies implements JsonSerializable{
 
                     }
                     $j++;
-                    if ($j<$colCount) $result.=',';// exclude 'massExponent' 'massValue' 'volValue' 'volExponent'
+                    if ($j<$colCount) $result.=',';
                 }
             }
 
@@ -700,7 +698,7 @@ class Bodies implements JsonSerializable{
         $descColumns[]=new Column("discoveryDate", "DECOUV_QD", "string");
         $descColumns[]=new Column("alternativeName", "DES_TEMPO", "string");
         $descColumns[]=new Column("axialTilt", "INCLINAISON_AXE", "number");
-        $descColumns[]=new Column("avgTemp", "avg_temp ", "number");
+        $descColumns[]=new Column("avgTemp", "avg_temp", "number");
         $descColumns[]=new Column("mainAnomaly", "main_anomaly", "number");
         $descColumns[]=new Column("argPeriapsis", "arg_periapsis", "number");
         $descColumns[]=new Column("longAscNode", "long_asc_node", "number");
@@ -710,10 +708,10 @@ class Bodies implements JsonSerializable{
     //all columns available for WHERE and ORDER
     public static function getSQLColumns(){
         $sqlColumns=Bodies::getDescColumns();
-        $sqlColumns[]=new Column("massExponent","mass_unit","number"); // Warning note présent in result, exclude when use getDescColumns()
-        $sqlColumns[]=new Column("massValue","mass_val","number");     // Warning note présent in result, exclude when use getDescColumns()
-        $sqlColumns[]=new Column("volValue","vol_val","number");       // Warning note présent in result, exclude when use getDescColumns()
-        $sqlColumns[]=new Column("volExponent","vol_unit","number");   // Warning note présent in result, exclude when use getDescColumns()
+        $sqlColumns[]=new Column("massExponent","mass_unit","number"); // Warning not present in result, exclude when use getDescColumns()
+        $sqlColumns[]=new Column("massValue","mass_val","number");     // Warning not present in result, exclude when use getDescColumns()
+        $sqlColumns[]=new Column("volValue","vol_val","number");       // Warning not present in result, exclude when use getDescColumns()
+        $sqlColumns[]=new Column("volExponent","vol_unit","number");   // Warning not present in result, exclude when use getDescColumns()
         return $sqlColumns ;
     }
     public static function echoParameters(){
