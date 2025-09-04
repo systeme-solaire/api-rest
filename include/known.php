@@ -51,31 +51,6 @@ class Known implements JsonSerializable{
         }
     }
 
-    public static function getDescSwaggerColumnsForKnown($rel){
-        $columns = Known::getDescColumns();
-        $i = 0;
-        foreach ($columns as $col) {
-            echo '"' . $col->getColId() . '": {"type": "' . $col->getColType() . '"}';      
-            if ($i < count($columns) - 1) echo ',';
-            $i++;
-        }
-        if ($rel) {
-            echo ',"rel":{"type":"string"}';
-        }
-    }
-
-    public static function echoParameters(){
-        echo '"parameters":[';
-        echo '{';
-        echo '"name":"rowData",';
-        echo '"in":"query",';
-        echo '"description":"Transform the object in records. NB: This can also be done client-side in JavaScript!",';
-        echo '"required":false,';
-        echo '"type":"boolean"';
-        echo '}';
-        echo ']'; 
-    }
-
     public static function getDescColumns(){
         $descColumns[]=new Column("id", "ID", "string");
         $descColumns[]=new Column("knownCount", "VAL", "number");

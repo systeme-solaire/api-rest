@@ -4,6 +4,16 @@ An open Rest API for querying all Solar System data.
 
 https://api.le-systeme-solaire.net
 
+# Authorization
+
+You need to have an API key to use that open Rest API.
+
+You just need to have an active email.
+Ask an API key on `https://api.le-systeme-solaire.net/generatekey.html`
+
+Add key on a bearer token in your header Authorization description :
+`Authorization: Bearer <API_KEY_GUID>`
+
 # Features
 
 ## Main bodies

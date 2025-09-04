@@ -2,6 +2,36 @@
 if (!defined("LOADED_AS_MODULE")) {
     die ("Vous n'&ecirc;tes pas autoris&eacute; &agrave; acc&eacute;der directement &agrave; cette page...");
 }
+function checkApiKey() {
+    $headers = getallheaders();
+    if (!isset($headers['Authorization'])) {
+        exitWith401("API key is missing. Ask your API key on https://api.le-systeme-solaire.net/generatekey.html. Add use it on a bearer token in your header Authorization description : `Authorization: Bearer <API_KEY_GUID>`");
+        //http_response_code(401);
+        //die(json_encode(["error" => "API key is missing. Ask your API key on https://api.le-systeme-solaire.net/generatekey.html. Add use it on a bearer token in your header Authorization description : `Authorization: Bearer <API_KEY_GUID>`"]));
+    }
+
+    if (preg_match('/Bearer\s+(\S+)/', $headers['Authorization'], $matches)) {
+        $apiKey = $matches[1];
+        DBAccess::ConfigInit();
+
+        $result = $GLOBALS['BDD']->prepare("SELECT id FROM syssol_tab_api_keys WHERE api_key = ? AND is_validated = 1");
+        $result->execute([$apiKey]);
+        $row = $result->fetch();
+        if ($row) {
+            // Incrémente le compteur d’usage
+            $update = $GLOBALS['BDD']->prepare("UPDATE syssol_tab_api_keys SET usage_count = usage_count + 1 WHERE id = ?");
+            $update->execute([$row['id']]);
+            $result->closeCursor();
+            return true; // Accès autorisé
+        }
+        $result->closeCursor();
+    }
+
+    exitWith403("Invalid API key");
+//    http_response_code(403);
+//    die(json_encode(["error" => "Invalid API key"]));
+}
+
 function isFilterPresent($filterName, $data, $exclude){
     $result=false;
     $onlyCols = explode(',', $data);
@@ -36,6 +66,7 @@ function executeCommand($settings, $request, $method, $get) {
         $output = false;
         $api=parseRequestParameter($request, 'a-zA-Z0-9\-_');
         if ($api==$GLOBALS['bodies']){
+            checkApiKey();
             /* si action bodies */
             $parameters = getParametersForBodies($settings,$request,$method,$get);
             switch($parameters['action']){
@@ -45,6 +76,7 @@ function executeCommand($settings, $request, $method, $get) {
                 default: $output = false;
             }
         }elseif ($api==$GLOBALS['known']){
+            checkApiKey();
             /* si action knowncount */
             $parameters = getParametersForKnown($settings,$request,$method,$get);
             switch($parameters['action']){
@@ -303,6 +335,15 @@ function exitWith403($type) {
     }
 }
 
+function exitWith401($type) {
+    if (isset($_SERVER['REQUEST_METHOD'])) {
+        header('Content-Type:',true,401);
+        die("Unauthorized ($type)");
+    } else {
+        throw new \Exception("Unauthorized ($type)");
+    }
+}
+
 function exitWith400($type) {
     if (isset($_SERVER['REQUEST_METHOD'])) {
         header('Content-Type:',true,400);
@@ -370,7 +411,61 @@ function headersCommandForBodies() {
     echo '},';
 
     echo '"GET":{';
-    Bodies::echoParameters();
+        echo '"parameters":[';
+        echo '{';
+        echo '"name":"data",';
+        echo '"in":"query",';
+        echo '"description":"The data you want to retrieve (comma separated). Example: id,semimajorAxis,isPlanet.",';
+        echo '"required":false,';
+        echo '"type":"string"';
+        echo '},';
+        echo '{';
+        echo '"name":"exclude",';
+        echo '"in":"query",';
+        echo '"description":"One or more data you want to exclude (comma separated). Example: id,isPlanet.",';
+        echo '"required":false,';
+        echo '"type":"string"';
+        echo '},';
+        echo '{';
+        echo '"name":"order",';
+        echo '"in":"query",';
+        echo '"description":"A data you want to sort on and the sort direction (comma separated). Example: id,desc. Only one data is authorized.",';
+        echo '"required":false,';
+        echo '"type":"string"';
+        echo '},';
+        echo '{';
+        echo '"name":"page",';
+        echo '"in":"query",';
+        echo '"description":"Page number (number>=1) and page size (size>=1 and 20 by default) (comma separated). NB: You cannot use \"page\" without \"order\"! Example: 1,10.",';
+        echo '"required":false,';
+        echo '"type":"string"';
+        echo '},';
+        echo '{';
+        echo '"name":"rowData",';
+        echo '"in":"query",';
+        echo '"description":"Transform the object in records. NB: This can also be done client-side in JavaScript!",';
+        echo '"required":false,';
+        echo '"type":"boolean"';
+        echo '}';
+        echo ',';
+        echo '{';
+        echo '"name":"filter[]",';
+        echo '"in":"query",';
+        echo '"description":"Filters to be applied. Each filter consists of a data, an operator and a value (comma separated). Example: id,eq,mars. Accepted operators are : cs (like) - sw (start with) - ew (end with) - eq (equal) - lt (less than) - le (less or equal than) - ge (greater or equal than) - gt (greater than) - bt (between). And all opposites operators : ncs - nsw - new - neq - nlt - nle - nge - ngt - nbt. Note : if anyone filter is invalid, all filters will be ignore.",';
+        echo '"required":false,';
+        echo '"type":"array",';
+        echo '"collectionFormat":"multi",';
+        echo '"items":{"type":"string"}';
+        echo '},';
+        echo '{';
+        echo '"name":"satisfy",';
+        echo '"in":"query",';
+        echo '"description":"Should all filters match (default)? Or any?",';
+        echo '"required":false,';
+        echo '"type":"string",';
+        echo '"enum":["any"]';
+        echo '}';
+        echo ']'; 
     echo '}';
     echo '}';
     return false;
@@ -396,7 +491,15 @@ function headersCommandForKnown() {
     echo '},';
 
     echo '"GET":{';
-    Known::echoParameters();
+        echo '"parameters":[';
+        echo '{';
+        echo '"name":"rowData",';
+        echo '"in":"query",';
+        echo '"description":"Transform the object in records. NB: This can also be done client-side in JavaScript!",';
+        echo '"required":false,';
+        echo '"type":"boolean"';
+        echo '}';
+        echo ']'; 
     echo '}';
     echo '}';
     return false;
