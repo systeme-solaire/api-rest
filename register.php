@@ -3,6 +3,12 @@ define("LOADED_AS_MODULE","1");
 include_once('include/dbaccess.php');
 $GLOBALS['DEBUG']=0;
 
+if (isset($_POST['lang'])) {
+    $lang = $_POST['lang'];
+}
+$en=false;
+if ($lang=="en"){$en=true;}
+
 DBAccess::ConfigInit();
 
 // Fonction GUID
@@ -27,21 +33,33 @@ $captchaInput = $_POST['captcha'] ?? '';
 $captchaData  = $_SESSION['captcha'] ?? null;
 
 if (!$captchaData) {
-    echo "❌ Captcha manquant. Rechargez la page.";
+    if ($en) {
+        echo "❌ Missing Captcha. Reload the page.";
+    }else{
+        echo "❌ Captcha manquant. Rechargez la page.";
+    }
     exit;
 }
 
 // Vérifier expiration (2 minutes = 120 secondes)
 if (time() - $captchaData['time'] > 600) {
     unset($_SESSION['captcha']);
-    echo "❌ Captcha expiré. Cliquez sur l'image pour en générer un nouveau.";
+    if ($en) {
+        echo "❌ Expired Captcha. Click on captcha to reload a new one.";
+    }else{
+        echo "❌ Captcha expiré. Cliquez sur l'image pour en générer un nouveau.";
+    }
     exit;
 }
 
 // Vérifier code
 if (strtolower($captchaInput) !== strtolower($captchaData['code'])) {
     unset($_SESSION['captcha']);
-    echo "❌ Captcha invalide. Veuillez réessayer.";
+    if ($en) {
+        echo "❌ Invalid Captcha. Please retry.";
+    }else{
+        echo "❌ Captcha invalide. Veuillez réessayer.";
+    }
     exit;
 }
 
@@ -51,7 +69,11 @@ unset($_SESSION['captcha']);
 // Récupérer email
 $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
 if (!$email) {
-    echo "❌ Email invalide";
+    if ($en) {
+        echo "❌ Invalid email";
+    }else{
+        echo "❌ Email invalide";
+    }
     exit;
 }
 
@@ -64,12 +86,17 @@ $stmt = $GLOBALS['BDD']->prepare("INSERT INTO syssol_tab_api_keys (email, api_ke
 $stmt->execute([$email, $apiKey]);
 
 // Envoyer email avec lien de validation
-$validationUrl = "https://api.le-systeme-solaire.net/validate.php?key=" . urlencode($apiKey);
 $headers = 'From: api@le-systeme-solaire.net' . "\r\n" .
     'Reply-To: api@le-systeme-solaire.net';
 
-mail($email, "Your API key for the Solar system OpenData", "Thx for using the Solar system OpenData. Clic here to validate your token : " . $validationUrl, $headers);
-
-echo "✅ Un email de validation vous a été envoyé.";
+    if ($en) {
+        $validationUrl = "https://api.le-systeme-solaire.net/validate.php?lang=en&key=" . urlencode($apiKey);
+        mail($email, "Your API key for the Solar system OpenData", "Thx for using the Solar system OpenData. Click here to validate your token : " . $validationUrl, $headers);
+        echo "✅ An email was sended to you.";
+    }else{
+        $validationUrl = "https://api.le-systeme-solaire.net/validate.php?lang=fr&key=" . urlencode($apiKey);
+        mail($email, "Votre clé API pour l'OpenData du système solaire", "Merci d'utiliser l'Opendata du système solaire. Pour valider votre clé veuillez cliquer ici : " . $validationUrl, $headers);
+        echo "✅ Un email de validation vous a été envoyé.";
+    }
 exit;
 ?>
