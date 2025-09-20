@@ -5,7 +5,7 @@ $GLOBALS['known']='knowncount';
 $GLOBALS['positions'] = 'positions';
 $GLOBALS['DEBUG']=0;
 
-$GLOBALS['API_VERSION']="3.0.0";
+$GLOBALS['API_VERSION']="3.0.1";
 
 $GLOBALS['VirtualHost']="localhost";
 if ($_SERVER['HTTP_HOST']==$GLOBALS['VirtualHost']){

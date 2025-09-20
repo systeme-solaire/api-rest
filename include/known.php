@@ -67,7 +67,7 @@ class Known implements JsonSerializable{
         return $cleanedColumns;
     }
 
-    public static function getAll($allColumns, $rowData){
+    public static function getAll($allColumns){
         DBAccess::ConfigInit();
         $scriptsql = "SELECT ".self::FIELDS." FROM ".self::TABLE."";
 
@@ -80,16 +80,11 @@ class Known implements JsonSerializable{
         while($row=$statement->fetch(PDO::FETCH_ASSOC)){
             $i++;
             $j=0; // pour les colonnes
-            if ($rowData) {
-                $result = '[';
-            }else{
-                $result = '{';
-            }
+            $result = '{';
 
             foreach ($allColumns as $column) {
-                if (!$rowData) {
-                    $result .= '"' . $column->getColId() . '":';
-                }
+                $result .= '"' . $column->getColId() . '":';
+                
                 switch ($column->getColId()){
                     default:
                         switch ($column->getColType()) {
@@ -112,16 +107,10 @@ class Known implements JsonSerializable{
             }
 
             $result .= ',';
-            if (!$rowData) {
-                $result .= '"rel":';
-            }
+            $result .= '"rel":';
             $result .= '"' . $GLOBALS['API_URL_KNOWN'] . '/' . $row["ID"] . '"';
-
-            if ($rowData) {
-                $result .= ']';
-            }else{
-                $result .= '}';
-            }
+            $result .= '}';
+            
             if ($i!=$statement->rowCount()){
                 $result.=',';
             }

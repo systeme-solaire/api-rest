@@ -85,15 +85,13 @@ An URL returns known count for the object type :
 |2| 	exclude 	|One or more data you want to exclude (comma separated).|
 |3| 	order 	|The sort order data you want to use and the sort direction (comma separated).|
 |4| 	page 	|Page number (number>=1) and page size (size>=1 with 20 as default) (comma separated).|
-|5| 	rowData 	|Transform the objects in records.|
-|6| 	filter[] 	|Filters to be applied. Each filter consists of a data, an operator and a value (comma separated).|
-|7| 	satisfy 	|Should all filters match (default).|
+|5| 	filter[] 	|Filters to be applied. Each filter consists of a data, an operator and a value (comma separated).|
+|6| 	satisfy 	|Should all filters match (default).|
 
 ## API parameters /knowncount
 
 |#| 	Parameter |	Action|
 |-|---------------|-------|
-|1| 	rowData 	|Transform the objects in records.|
 
 ## API parameters /positions
 

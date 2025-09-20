@@ -279,7 +279,7 @@ class Bodies implements JsonSerializable{
     }
 
     /* Obtenir les satellites d'un astre */
-    public static function getSatellite($id, $rowData, $isRelPresent, $isMoonPresent){
+    public static function getSatellite($id, $isRelPresent, $isMoonPresent){
         DBAccess::ConfigInit();
 
         $result="";
@@ -291,28 +291,16 @@ class Bodies implements JsonSerializable{
         if ($colCount>0){
             $result = '[';
             while($row=$statement->fetch(PDO::FETCH_ASSOC)){
-                
-                if (!$rowData) {
-                    $result .= '{';
-                    if ($isMoonPresent) {
-                        $result .= '"moon":"' . $row["NOM"] . '"';
-                    }
-                    if ($isRelPresent) {
-                        if ($isMoonPresent)  $result .= ',';
-                        $result .= '"rel":"' . $GLOBALS['API_URL_BODIES'] . '/' . $row["CPT_CORPS"] . '"';
-                    }
-                    $result .= '}';
-                }else{
-                    $result .= '[';
-                    if ($isMoonPresent) {
-                        $result .= '"' . $row["NOM"] . '"';
-                    }
-                    if ($isRelPresent) {
-                        if ($isMoonPresent) $result .= ',';
-                        $result .= '"' . $GLOBALS['API_URL_BODIES'] . '/' . $row["CPT_CORPS"] . '"';
-                    }
-                    $result .= ']';
+                $result .= '{';
+                if ($isMoonPresent) {
+                    $result .= '"moon":"' . $row["NOM"] . '"';
                 }
+                if ($isRelPresent) {
+                    if ($isMoonPresent)  $result .= ',';
+                    $result .= '"rel":"' . $GLOBALS['API_URL_BODIES'] . '/' . $row["CPT_CORPS"] . '"';
+                }
+                $result .= '}';
+
                 $j++;
                 if ($j<$colCount) $result.=',';
             }
@@ -483,7 +471,7 @@ class Bodies implements JsonSerializable{
         return $result;
     }
 
-    public static function getAll($allColumns, $rowData, $orderings, $page, $filters, $isRelPresent, $isPlanetPresent, $isMoonPresent, $isMassValuePresent, $isMassExpPresent, $isVolValuePresent, $isVolExpPresent){
+    public static function getAll($allColumns, $orderings, $page, $filters, $isRelPresent, $isPlanetPresent, $isMoonPresent, $isMassValuePresent, $isMassExpPresent, $isVolValuePresent, $isVolExpPresent){
         DBAccess::ConfigInit();
         $scriptsql = "SELECT ".self::FIELDS." FROM ".self::TABLE."";
 
@@ -517,42 +505,25 @@ class Bodies implements JsonSerializable{
         while($row=$statement->fetch(PDO::FETCH_ASSOC)){
             $i++;
             $j=0; // pour les colonnes
-            if ($rowData) {
-                $result = '[';
-            }else{
-                $result = '{';
-            }
+            $result = '{';
 
             foreach ($allColumns as $column) {
                 if ($column->getColId() != 'massExponent'&& $column->getColId()!='massValue' && $column->getColId()!='volValue' && $column->getColId()!='volExponent'){
-                    if (!$rowData) {
-                        $result .= '"' . $column->getColId() . '":';
-                    }
+                    $result .= '"' . $column->getColId() . '":';
+
                     switch ($column->getColId()){
                         case 'aroundPlanet':
                             if ($row[$column->getColName()]!=''){
                                 // c'est un satellite
-                                if (!$rowData) {
-                                    $result .= '{';
-                                    if ($isPlanetPresent) {
-                                        $result .= '"planet":"' . $row[$column->getColName()] . '"';
-                                    }
-                                    if ($isRelPresent) {
-                                        if ($isPlanetPresent)  $result .= ',';
-                                        $result .= '"rel":"' . $GLOBALS['API_URL_BODIES'] . '/' . $row[$column->getColName()] . '"';
-                                    }
-                                    $result .= '}';
-                                }else{
-                                    $result .= '[';
-                                    if ($isPlanetPresent) {
-                                        $result .= '"' . $row[$column->getColName()] . '"';
-                                    }
-                                    if ($isRelPresent) {
-                                        if ($isPlanetPresent) $result .= ',';
-                                        $result .= '"' . $GLOBALS['API_URL_BODIES'] . '/' . $row[$column->getColName()] . '"';
-                                    }
-                                    $result .= ']';
+                                $result .= '{';
+                                if ($isPlanetPresent) {
+                                    $result .= '"planet":"' . $row[$column->getColName()] . '"';
                                 }
+                                if ($isRelPresent) {
+                                    if ($isPlanetPresent)  $result .= ',';
+                                    $result .= '"rel":"' . $GLOBALS['API_URL_BODIES'] . '/' . $row[$column->getColName()] . '"';
+                                }
+                                $result .= '}';
                             }else{
                                 // ce n'est pas un satellite
                                 $result .= 'null';
@@ -561,27 +532,15 @@ class Bodies implements JsonSerializable{
                         case 'mass':
                             if ($row["mass_val"]!=0){
                                 // il a une masse
-                                if (!$rowData) {
-                                    $result .= '{';
-                                    if ($isMassValuePresent) {
-                                        $result .= '"massValue":' . $row["mass_val"];
-                                    }
-                                    if ($isMassExpPresent) {
-                                        if ($isMassValuePresent) $result .= ',';
-                                        $result .= '"massExponent":' . $row["mass_unit"] ;
-                                    }
-                                    $result .= '}';
-                                }else{
-                                    $result .= '[';
-                                    if ($isMassValuePresent) {
-                                        $result .= $row["mass_val"];
-                                    }
-                                    if ($isMassExpPresent) {
-                                        if ($isMassValuePresent) $result .= ',';
-                                        $result .= $row["mass_unit"];
-                                    }
-                                    $result .= ']';
+                                $result .= '{';
+                                if ($isMassValuePresent) {
+                                    $result .= '"massValue":' . $row["mass_val"];
                                 }
+                                if ($isMassExpPresent) {
+                                    if ($isMassValuePresent) $result .= ',';
+                                    $result .= '"massExponent":' . $row["mass_unit"] ;
+                                }
+                                $result .= '}';
                             }else{
                                 // ce n'est pas un satellite
                                 $result .= 'null';
@@ -590,27 +549,15 @@ class Bodies implements JsonSerializable{
                         case 'vol':
                             if ($row["vol_val"]!=0){
                                 // il a une masse
-                                if (!$rowData) {
-                                    $result .= '{';
-                                    if ($isVolValuePresent) {
-                                        $result .= '"volValue":' . $row["vol_val"];
-                                    }
-                                    if ($isVolExpPresent) {
-                                        if ($isVolValuePresent) $result .= ',';
-                                        $result .= '"volExponent":' . $row["vol_unit"] ;
-                                    }
-                                    $result .= '}';
-                                }else{
-                                    $result .= '[';
-                                    if ($isVolValuePresent) {
-                                        $result .= $row["vol_val"];
-                                    }
-                                    if ($isVolExpPresent) {
-                                        if ($isVolValuePresent) $result .= ',';
-                                        $result .= $row["vol_unit"];
-                                    }
-                                    $result .= ']';
+                                $result .= '{';
+                                if ($isVolValuePresent) {
+                                    $result .= '"volValue":' . $row["vol_val"];
                                 }
+                                if ($isVolExpPresent) {
+                                    if ($isVolValuePresent) $result .= ',';
+                                    $result .= '"volExponent":' . $row["vol_unit"] ;
+                                }
+                                $result .= '}';
                             }else{
                                 // ce n'est pas un satellite
                                 $result .= 'null';
@@ -618,7 +565,7 @@ class Bodies implements JsonSerializable{
                             break;
                         case "moons":
                             if ($row["BL_PLANETE"] == -1 || $row["BL_PLANETE_NAINE"]=='-1' || $row["BL_ASTEROIDE"] =='-1' || $row["BL_TNO"]=='-1'){
-                                $result .= Bodies::getSatellite($row["CPT_CORPS"], $rowData, $isRelPresent, $isMoonPresent);
+                                $result .= Bodies::getSatellite($row["CPT_CORPS"], $isRelPresent, $isMoonPresent);
                             }else{
                                 $result .= "null";
                             }
@@ -647,16 +594,11 @@ class Bodies implements JsonSerializable{
 
             if ($isRelPresent) {
                 $result .= ',';
-                if (!$rowData) {
-                    $result .= '"rel":';
-                }
+                $result .= '"rel":';
                 $result .= '"' . $GLOBALS['API_URL_BODIES'] . '/' . $row["CPT_CORPS"] . '"';
             }
-            if ($rowData) {
-                $result .= ']';
-            }else{
-                $result .= '}';
-            }
+            $result .= '}';
+
             if ($i!=$statement->rowCount()){
                 $result.=',';
             }

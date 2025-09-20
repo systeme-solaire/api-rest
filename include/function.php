@@ -119,81 +119,9 @@ function listCommandForBodies($parameters){
     $isVolExpPresent=isFilterPresent('volExponent', $data, $exclude);
 
     echo '{"' . $GLOBALS['bodies'] . '":';
-    if ($rowData){
-        echo '{"data":';
-
-        $columnString = '';
-        $colCount = count($allColumns);
-        if ($colCount > 0) {
-            $i = 0;
-            $columnString = '[';
-            foreach ($allColumns as $column) {
-                switch($column->getColId()){
-                    case 'aroundPlanet':
-                        $columnString .= '{"' . $column->getColId() . '":[';
-                        if ($isPlanetPresent) {
-                            $columnString .= '"planet"';
-                        }
-                        if ($isRelPresent) {
-                            if ($isPlanetPresent) $columnString .= ',';
-                            $columnString .= '"rel"';
-                        }
-                        $columnString .= ']}';
-                        break;
-                    case 'moons':
-                        $columnString .= '{"' . $column->getColId() . '":[';
-                        if ($isPlanetPresent) {
-                            $columnString .= '"moon"';
-                        }
-                        if ($isRelPresent) {
-                            if ($isPlanetPresent) $columnString .= ',';
-                            $columnString .= '"rel"';
-                        }
-                        $columnString .= ']}';
-                        break;
-                    case 'mass':
-                        $columnString .= '{"' . $column->getColId() . '":[';
-                        if ($isMassValuePresent) {
-                            $columnString .= '"massValue"';
-                        }
-                        if ($isMassExpPresent) {
-                            if ($isMassValuePresent) $columnString .= ',';
-                            $columnString .= '"massExponent"';
-                        }
-                        $columnString .= ']}';
-                        break;
-                    case 'vol':
-                        $columnString .= '{"' . $column->getColId() . '":[';
-                        if ($isVolValuePresent) {
-                            $columnString .= '"volValue"';
-                        }
-                        if ($isVolExpPresent) {
-                            if ($isVolValuePresent) $columnString .= ',';
-                            $columnString .= '"volExponent"';
-                        }
-                        $columnString .= ']}';
-                        break;
-                    default:
-                        $columnString .= '"' . $column->getColId() . '"';
-                        break;
-                }
-                $i++;
-                if ($i < $colCount) $columnString .= ',';
-            }
-            if ($isRelPresent) {
-                $columnString .= ',"rel"';
-            }
-            $columnString .= ']';
-        }
-        echo $columnString;
-        echo ',';
-        echo '"records":';
-    }
-
     echo '[';
-    echo Bodies::getAll($allColumns, $rowData, $orderings, $page, $filters, $isRelPresent, $isPlanetPresent, $isMoonPresent, $isMassValuePresent, $isMassExpPresent, $isVolValuePresent, $isVolExpPresent);
+    echo Bodies::getAll($allColumns, $orderings, $page, $filters, $isRelPresent, $isPlanetPresent, $isMoonPresent, $isMassValuePresent, $isMassExpPresent, $isVolValuePresent, $isVolExpPresent);
     echo ']';
-    if ($rowData){ echo '}';}
     echo '}';//fin
 
     return false;
@@ -241,34 +169,9 @@ function listCommandForKnown($parameters) {
     }
 
     echo '{"' . $GLOBALS['known'] . '":';
-    if ($rowData){
-        echo '{"data":';
-
-        $columnString = '';
-        $colCount = count($allColumns);
-        if ($colCount > 0) {
-            $i = 0;
-            $columnString = '[';
-            foreach ($allColumns as $column) {
-                switch($column->getColId()){
-                    default:
-                        $columnString .= '"' . $column->getColId() . '"';
-                        break;
-                }
-                $i++;
-                if ($i < $colCount) $columnString .= ',';
-            }
-            $columnString .= ']';
-        }
-        echo $columnString;
-        echo ',';
-        echo '"records":';
-    }
-
     echo '[';
-    echo Known::getAll($allColumns, $rowData);
+    echo Known::getAll($allColumns);
     echo ']';
-    if ($rowData){ echo '}';}
     echo '}';//fin
 
     return false;
@@ -559,14 +462,6 @@ function headersCommandForBodies() {
         echo '"type":"string"';
         echo '},';
         echo '{';
-        echo '"name":"rowData",';
-        echo '"in":"query",';
-        echo '"description":"Transform the object in records. NB: This can also be done client-side in JavaScript!",';
-        echo '"required":false,';
-        echo '"type":"boolean"';
-        echo '}';
-        echo ',';
-        echo '{';
         echo '"name":"filter[]",';
         echo '"in":"query",';
         echo '"description":"Filters to be applied. Each filter consists of a data, an operator and a value (comma separated). Example: id,eq,mars. Accepted operators are : cs (like) - sw (start with) - ew (end with) - eq (equal) - lt (less than) - le (less or equal than) - ge (greater or equal than) - gt (greater than) - bt (between). And all opposites operators : ncs - nsw - new - neq - nlt - nle - nge - ngt - nbt. Note : if anyone filter is invalid, all filters will be ignore.",';
@@ -609,13 +504,6 @@ function headersCommandForKnown() {
 
     echo '"GET":{';
         echo '"parameters":[';
-        echo '{';
-        echo '"name":"rowData",';
-        echo '"in":"query",';
-        echo '"description":"Transform the object in records. NB: This can also be done client-side in JavaScript!",';
-        echo '"required":false,';
-        echo '"type":"boolean"';
-        echo '}';
         echo ']'; 
     echo '}';
     echo '}';
@@ -923,7 +811,6 @@ function getParametersForBodies($settings,$request,$method,$get) {
     $exclude   = parseGetParameter($get, 'exclude', 'a-zA-Z0-9\-_,.*');
     $orderings = parseGetParameterArray($get, 'order', 'a-zA-Z0-9\-_,');
     $page      = parseGetParameter($get, 'page', '0-9,');
-    $rowData   = parseGetParameter($get, 'rowData', 't1');
     $data      = parseGetParameter($get, 'data', 'a-zA-Z0-9\-_,.*');
     $filters   = parseGetParameterArray($get, 'filter', false);
     $satisfy   = parseGetParameter($get, 'satisfy', 'a-zA-Z0-9\-_,.');
@@ -935,7 +822,7 @@ function getParametersForBodies($settings,$request,$method,$get) {
     $orderings = processOrderingsParameter($orderings);
     $page      = processPageParameter($page);
 
-    return compact('action','tables','key','page','filters','orderings','rowData','exclude','data');
+    return compact('action','tables','key','page','filters','orderings','exclude','data');
 }
 
 function getParametersForKnown($settings,$request,$method,$get) {
@@ -944,9 +831,8 @@ function getParametersForKnown($settings,$request,$method,$get) {
     $query     = parseRequestParameter($request, 'a-zA-Z0-9\-_');  // /knowncount
     $key       = parseRequestParameter($request, 'a-zA-Z0-9\-_,'); // auto-increment or uuid
     $action    = mapMethodToAction($method,$key);
-    $rowData   = parseGetParameter($get, 'rowData', 't1');
 
-    return compact('action','key','rowData');
+    return compact('action','key');
 }
 
 function getParametersForPositions($settings,$request,$method,$get) {
@@ -955,8 +841,7 @@ function getParametersForPositions($settings,$request,$method,$get) {
     $query     = parseRequestParameter($request, 'a-zA-Z0-9\-_');  // /position
     $key       = parseRequestParameter($request, 'a-zA-Z0-9\-_,'); // auto-increment or uuid
     $action    = mapMethodToAction($method,$key);
-    $rowData   = parseGetParameter($get, 'rowData', 't1');
 
-    return compact('action','key','rowData');
+    return compact('action','key');
 }
 ?>

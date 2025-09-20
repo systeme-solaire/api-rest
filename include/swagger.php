@@ -81,14 +81,6 @@ function swagger() {
                             }
                         },
                         {
-                            "name": "rowData",
-                            "in": "query",
-                            "description": "Transform the object in records. NB: This can also be done client-side in JavaScript!",
-                            "schema": {
-                                "type": "boolean"
-                            }
-                        },
-                        {
                             "name": "filter[]",
                             "in": "query",
                             "description": "Filters to be applied. Each filter consists of a data, an operator and a value (comma separated). Example: id,eq,mars. Accepted operators are : cs (like) - sw (start with) - ew (end with) - eq (equal) - lt (less than) - le (less or equal than) - ge (greater or equal than) - gt (greater than) - bt (between). And all opposites operators : ncs - nsw - new - neq - nlt - nle - nge - ngt - nbt. Note : if anyone filter is invalid, all filters will be ignore.",
@@ -452,14 +444,6 @@ function swagger() {
                     ],
                     "summary": "List",
                     "parameters": [
-                        {
-                            "name": "rowData",
-                            "in": "query",
-                            "description": "Transform the object in records. NB: This can also be done client-side in JavaScript!",
-                            "schema": {
-                                "type": "boolean"
-                            }
-                        }
                     ],
                     "responses": {
                         "200": {
