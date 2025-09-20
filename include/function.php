@@ -6,8 +6,6 @@ function checkApiKey() {
     $headers = getallheaders();
     if (!isset($headers['Authorization'])) {
         exitWith401("API key is missing. Ask your API key on https://api.le-systeme-solaire.net/generatekey.html. Add use it on a bearer token in your header Authorization description : `Authorization: Bearer <API_KEY_GUID>`");
-        //http_response_code(401);
-        //die(json_encode(["error" => "API key is missing. Ask your API key on https://api.le-systeme-solaire.net/generatekey.html. Add use it on a bearer token in your header Authorization description : `Authorization: Bearer <API_KEY_GUID>`"]));
     }
 
     if (preg_match('/Bearer\s+(\S+)/', $headers['Authorization'], $matches)) {
@@ -28,8 +26,6 @@ function checkApiKey() {
     }
 
     exitWith403("Invalid API key");
-//    http_response_code(403);
-//    die(json_encode(["error" => "Invalid API key"]));
 }
 
 function isFilterPresent($filterName, $data, $exclude){
@@ -97,9 +93,7 @@ function executeCommand($settings, $request, $method, $get) {
 
 function listCommandForBodies($parameters){
     extract($parameters);
-
     startOutput();
-  //  ob_start("ob_gzhandler");
 
     $allColumns = Bodies::getValidColumns($data, $exclude);
     if (count($allColumns) == 0) {
@@ -192,7 +186,6 @@ function listCommandForBodies($parameters){
     if ($rowData){ echo '}';}
     echo '}';//fin
 
-   // ob_end_flush();
     return false;
 }
 
@@ -228,13 +221,9 @@ function readCommandForBodies($parameters) {
     return false;
 }
 
-
-function listCommandForKnown($parameters)
-{
+function listCommandForKnown($parameters) {
     extract($parameters);
-
     startOutput();
-  //  ob_start("ob_gzhandler");
 
     $allColumns = Known::getValidColumns();
     if (count($allColumns) == 0) {
@@ -272,7 +261,6 @@ function listCommandForKnown($parameters)
     if ($rowData){ echo '}';}
     echo '}';//fin
 
-   // ob_end_flush();
     return false;
 }
 
@@ -403,7 +391,6 @@ function headersCommandForBodies() {
     startOutput();
     echo '{';
     echo '"header":{';
-    //echo json_encode($headers);
     echo '"Access-Control-Allow-Headers": ["Content-Type", "X-XSRF-TOKEN"],';
     echo '"Access-Control-Allow-Methods": ["OPTIONS", "GET", "HEAD"],';
     echo '"Access-Control-Allow-Credentials": true,';
@@ -483,7 +470,6 @@ function headersCommandForKnown() {
     startOutput();
     echo '{';
     echo '"header":{';
-    //echo json_encode($headers);
     echo '"Access-Control-Allow-Headers": ["Content-Type", "X-XSRF-TOKEN"],';
     echo '"Access-Control-Allow-Methods": ["OPTIONS", "GET", "HEAD"],';
     echo '"Access-Control-Allow-Credentials": true,';
@@ -516,7 +502,6 @@ function processOrderingsParameter($orderings) {
 
         if (empty($order[1])) $order[1]='ASC';
         if (!strlen($order[0])) return false;
-
 
         //convert id to column name
         $descCol=Bodies::getSQLColumns();
@@ -760,6 +745,7 @@ function getParametersForBodies($settings,$request,$method,$get) {
 
     return compact('action','tables','key','page','filters','orderings','rowData','exclude','data');
 }
+
 function getParametersForKnown($settings,$request,$method,$get) {
     extract($settings);
 
