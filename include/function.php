@@ -2,6 +2,59 @@
 if (!defined("LOADED_AS_MODULE")) {
     die ("Vous n'&ecirc;tes pas autoris&eacute; &agrave; acc&eacute;der directement &agrave; cette page...");
 }
+
+function executeCommand($settings, $request, $method, $get) {
+    if ($method!='GET' && $method!='OPTIONS'&& $method!='HEAD' ){
+        exitWith403('action');
+    }
+    header_remove("X-Powered-By"); 
+    if ($settings['origin']) {
+         allowOrigin($settings['allow_origin']);
+    }
+    if (!$settings['request']) {
+        swagger();
+    } else {
+        $output = false;
+        $api=parseRequestParameter($request, 'a-zA-Z0-9\-_');
+        if ($api==$GLOBALS['bodies']){
+            checkApiKey();
+            /* si action bodies */
+            $parameters = getParametersForBodies($settings,$request,$method,$get);
+            switch($parameters['action']){
+                case 'list': $output = listCommandForBodies($parameters); break;
+                case 'read': $output = readCommandForBodies($parameters); break;
+                case 'headers': $output = headersCommandForBodies(); break;
+                default: $output = false;
+            }
+        }elseif ($api==$GLOBALS['known']){
+            checkApiKey();
+            /* si action knowncount */
+            $parameters = getParametersForKnown($settings,$request,$method,$get);
+            switch($parameters['action']){
+                case 'list': $output = listCommandForKnown($parameters); break;
+                case 'read': $output = readCommandForKnown($parameters); break;
+                case 'headers': $output = headersCommandForKnown(); break;
+                default: $output = false;
+            }
+        }elseif ($api==$GLOBALS['positions']){
+            checkApiKey();
+            /* si action position */
+            $parameters = getParametersForPositions($settings,$request,$method,$get);
+            switch($parameters['action']){
+                case 'list': $output = listCommandForPositions($parameters); break;
+                case 'headers': $output = headersCommandForPositions(); break;
+                default: $output = false;
+            }
+        }else {
+            exitWith404('entity');
+        }
+        if ($output!==false) {
+            startOutput();
+            echo json_encode($output);
+        }
+    }
+}
+
 function checkApiKey() {
     $headers = getallheaders();
     if (!isset($headers['Authorization'])) {
@@ -45,49 +98,6 @@ function allowOrigin($allowOrigins) {
     if (isset($_SERVER['REQUEST_METHOD'])) {
         header('Access-Control-Allow-Credentials: true');
         header('Access-Control-Allow-Origin: '.$allowOrigins);
-    }
-}
-
-function executeCommand($settings, $request, $method, $get) {
-    if ($method!='GET' && $method!='OPTIONS'&& $method!='HEAD' ){
-        exitWith403('action');
-    }
-    header_remove("X-Powered-By"); 
-    if ($settings['origin']) {
-         allowOrigin($settings['allow_origin']);
-    }
-    if (!$settings['request']) {
-        swagger();
-    } else {
-        $output = false;
-        $api=parseRequestParameter($request, 'a-zA-Z0-9\-_');
-        if ($api==$GLOBALS['bodies']){
-            checkApiKey();
-            /* si action bodies */
-            $parameters = getParametersForBodies($settings,$request,$method,$get);
-            switch($parameters['action']){
-                case 'list': $output = listCommandForBodies($parameters); break;
-                case 'read': $output = readCommandForBodies($parameters); break;
-                case 'headers': $output = headersCommandForBodies(); break;
-                default: $output = false;
-            }
-        }elseif ($api==$GLOBALS['known']){
-            checkApiKey();
-            /* si action knowncount */
-            $parameters = getParametersForKnown($settings,$request,$method,$get);
-            switch($parameters['action']){
-                case 'list': $output = listCommandForKnown($parameters); break;
-                case 'read': $output = readCommandForKnown($parameters); break;
-                case 'headers': $output = headersCommandForKnown(); break;
-                default: $output = false;
-            }
-        }else {
-            exitWith404('entity');
-        }
-        if ($output!==false) {
-            startOutput();
-            echo json_encode($output);
-        }
     }
 }
 
@@ -280,6 +290,127 @@ function readCommandForKnown($parameters) {
         startOutput();
         echo Known::getOne($object,$allColumns);
     }
+    return false;
+}
+
+function listCommandForPositions($parameters) {
+    extract($parameters);
+    startOutput();
+
+    require_once 'astro_utils.php';
+    require_once 'astro_calculator.php';
+
+    try {
+        // Date et heure (par défaut maintenant)
+        $datetime = new DateTime();
+        
+        $lat = isset($_GET['lat']) ? (float)$_GET['lat'] : $lat;
+        $lon = isset($_GET['lon']) ? (float)$_GET['lon'] : $lon;
+        $elev = isset($_GET['elev']) ? (float)$_GET['elev'] : $elev;
+        $zone = isset($_GET['zone']) ? (float)$_GET['zone'] : $zone;
+        
+        if (!isset($_GET['lat'])) {
+            exitWith400("Latitude is mandatory : lat");
+        }
+        if (!isset($_GET['lon'])) {
+            exitWith400("Longitude is mandatory : lon");
+        }
+        if (!isset($_GET['elev'])) {
+            exitWith400("Altitude is mandatory : elev");
+        }
+        if (!isset($_GET['zone'])) {
+            exitWith400("TimeZone is mandatory : zone");
+        }
+        if (!isset($_GET['datetime'])) {
+            exitWith400("Date is mandatory : datetime");
+        }
+        if (isset($_GET['datetime'])) {
+            try {
+                $datetime = new DateTime($_GET['datetime']);
+            } catch (Exception $e) {
+                exitWith400("Invalid date Format: " . $_GET['datetime'] . ". Use YYYY-MM-DDTHH:MM:SS");
+            }
+        }
+        
+        // Validation des paramètres
+        if ($lat < -90 || $lat > 90) {
+            exitWith400("Ivalid latitude: $lat (from -90 to 90)");
+        }
+        if ($lon < -180 || $lon > 180) {
+            exitWith400("Invalid Longitude: $lon (from -180 to 180)");
+        }
+        
+        // Création du calculateur et calcul des positions
+        // IMPORTANT: Les calculs astronomiques utilisent UNIQUEMENT l'heure UTC
+        // Le fuseau horaire ne sert QUE pour l'affichage à l'utilisateur
+        $calculator = new AstroCalculator($lat, $lon, $elev); // Zone UTC pour calculs !
+        $positions = $calculator->calculatePositions($datetime);
+        
+        // Calcul des temps pour affichage (comme dans le JS original) - aussi en UTC
+        $utResult = AstroUtils::ut($datetime, 0); // UTC seulement
+        $UT = $utResult['ut'];
+        $j = AstroUtils::julian($datetime, 0); // UTC seulement  
+        $d = $j - 2451543.5;
+        
+        // Calcul GST et LST pour affichage - basés sur UTC pur
+        $w = 282.9404 + 4.70935E-5 * $d;
+        $M = 356.0470 + 0.9856002585 * $d;
+        $M = AstroUtils::rev($M);
+        $L = AstroUtils::rev($w + $M);
+        
+        $GST = AstroUtils::rev(($L / 15) + 12) + $UT;
+        while ($GST > 24) { $GST = $GST - 24; }
+        while ($GST < 0) { $GST = $GST + 24; }
+        
+        $LST = $GST + $lon / 15;
+        while ($LST > 24) { $LST = $LST - 24; }
+        while ($LST < 0) { $LST = $LST + 24; }
+        
+        // Calcul de l'heure locale POUR AFFICHAGE SEULEMENT
+        $datetimeString = $datetime->format('Y-m-d H:i:s'); // Conversion en string
+        $utcDateTime = new DateTime($datetimeString . ' UTC');
+        $localDateTime = clone $utcDateTime;
+        $localDateTime->modify('+' . $zone . ' hours'); // Plus de DST, juste la zone
+        
+        // Formatage de la réponse JSON
+        $response = [
+            'positions' => $positions,
+            'location' => [
+                'latitude' => $lat,
+                'longitude' => $lon,
+                'elevation' => $elev,
+                'timezone' => $zone
+            ],
+            'time_info' => [
+                'calculated_for_utc' => $utcDateTime->format('Y-m-d H:i:s') . ' UTC',
+                'local_time_display' => $localDateTime->format('Y-m-d H:i:s') . ' (UTC' . ($zone >= 0 ? '+' : '') . $zone . ')',
+                'universal_time_ut' => AstroUtils::HMS($UT),
+                'universal_time_decimal' => round($UT, 4),
+                'julian_day' => round($j, 6),
+                'day_number_j2000' => round($d, 2),
+                'greenwich_sidereal_time' => AstroUtils::HMS($GST),
+                'local_sidereal_time' => AstroUtils::HMS($LST),
+                'gst_decimal' => round($GST, 4),
+                'lst_decimal' => round($LST, 4)
+            ]
+        ];
+        
+        echo json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        
+    } catch (Exception $e) {
+        $error_response = [
+            'success' => false,
+            'error' => [
+                'message' => $e->getMessage(),
+                'code' => $e->getCode()
+            ],
+            'generated_at' => date('Y-m-d H:i:s')
+        ];
+        
+        http_response_code(500);
+        echo json_encode($error_response, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    }
+
     return false;
 }
 
@@ -484,6 +615,67 @@ function headersCommandForKnown() {
         echo '"description":"Transform the object in records. NB: This can also be done client-side in JavaScript!",';
         echo '"required":false,';
         echo '"type":"boolean"';
+        echo '}';
+        echo ']'; 
+    echo '}';
+    echo '}';
+    return false;
+}
+
+function headersCommandForPosition() {
+    $headers = array();
+    $headers[]='Access-Control-Allow-Headers: Content-Type, X-XSRF-TOKEN';
+    $headers[]='Access-Control-Allow-Methods: OPTIONS, GET, HEAD';
+    $headers[]='Access-Control-Allow-Credentials: true';
+    $headers[]='Access-Control-Max-Age: 1728000';
+
+    foreach ($headers as $header) header($header);
+
+    startOutput();
+    echo '{';
+    echo '"header":{';
+    echo '"Access-Control-Allow-Headers": ["Content-Type", "X-XSRF-TOKEN"],';
+    echo '"Access-Control-Allow-Methods": ["OPTIONS", "GET", "HEAD"],';
+    echo '"Access-Control-Allow-Credentials": true,';
+    echo '"Access-Control-Max-Age": 1728000)';
+    echo '},';
+
+    echo '"GET":{';
+        echo '"parameters":[';
+        echo '{';
+        echo '"name":"lat",';
+        echo '"in":"query",';
+        echo '"description":"Latitude for observer. From -90° to +90°.",';
+        echo '"required":true,';
+        echo '"type":"float"';
+        echo '},';
+        echo '{';
+        echo '"name":"lon",';
+        echo '"in":"query",';
+        echo '"description":"Longitude for observer. From -180° to +180°.",';
+        echo '"required":true,';
+        echo '"type":"float"';
+        echo '},';
+        echo '{';
+        echo '"name":"elev",';
+        echo '"in":"query",';
+        echo '"description":"Altitude for observer in meter.",';
+        echo '"required":true,';
+        echo '"type":"integer"';
+        echo '},';
+        echo '{';
+        echo '"name":"datetime",';
+        echo '"in":"query",';
+        echo '"description":"Date UTC for observer in ISO 8601 Format (yyyy-MM-ddThh:mm:ss)",';
+        echo '"required":true,';
+        echo '"type":"integer"';
+        echo '},';
+        echo '{';
+        echo '"name":"zone",';
+        echo '"in":"query",';
+        echo '"description":"Time Zone for observer from -12 to +14",';
+        echo '"required":true,';
+        echo '"type":"integer"';
         echo '}';
         echo ']'; 
     echo '}';
@@ -750,6 +942,17 @@ function getParametersForKnown($settings,$request,$method,$get) {
     extract($settings);
 
     $query     = parseRequestParameter($request, 'a-zA-Z0-9\-_');  // /knowncount
+    $key       = parseRequestParameter($request, 'a-zA-Z0-9\-_,'); // auto-increment or uuid
+    $action    = mapMethodToAction($method,$key);
+    $rowData   = parseGetParameter($get, 'rowData', 't1');
+
+    return compact('action','key','rowData');
+}
+
+function getParametersForPositions($settings,$request,$method,$get) {
+    extract($settings);
+
+    $query     = parseRequestParameter($request, 'a-zA-Z0-9\-_');  // /position
     $key       = parseRequestParameter($request, 'a-zA-Z0-9\-_,'); // auto-increment or uuid
     $action    = mapMethodToAction($method,$key);
     $rowData   = parseGetParameter($get, 'rowData', 't1');

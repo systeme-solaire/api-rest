@@ -2,18 +2,21 @@
 define("LOADED_AS_MODULE","1");
 $GLOBALS['bodies']='bodies';
 $GLOBALS['known']='knowncount';
+$GLOBALS['positions'] = 'positions';
 $GLOBALS['DEBUG']=0;
 
-$GLOBALS['API_VERSION']="2.0.0";
+$GLOBALS['API_VERSION']="3.0.0";
 
 $GLOBALS['VirtualHost']="localhost";
 if ($_SERVER['HTTP_HOST']==$GLOBALS['VirtualHost']){
     $GLOBALS['DEBUG']=1;
     $GLOBALS['API_URL_BODIES']='http://'.$_SERVER['HTTP_HOST'].'/rest/'.$GLOBALS['bodies'];
     $GLOBALS['API_URL_KNOWN']='http://'.$_SERVER['HTTP_HOST'].'/rest/'.$GLOBALS['known'];
+    $GLOBALS['API_URL_POSITIONS']='http://'.$_SERVER['HTTP_HOST'].'/rest/'.$GLOBALS['positions'];
 }else{
     $GLOBALS['API_URL_BODIES']='https://'.$_SERVER['HTTP_HOST'].'/rest/'.$GLOBALS['bodies'];
     $GLOBALS['API_URL_KNOWN']='https://'.$_SERVER['HTTP_HOST'].'/rest/'.$GLOBALS['known'];
+    $GLOBALS['API_URL_POSITIONS']='https://'.$_SERVER['HTTP_HOST'].'/rest/'.$GLOBALS['positions'];
 }
 
 include_once('include/column.php');

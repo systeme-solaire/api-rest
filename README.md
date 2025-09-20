@@ -40,6 +40,14 @@ For every body, all its satellites and the ability to navigate between satellite
 
 Known count of each object type : planets, moons, asteroids, comets.
 
+## Positions of objects
+
+Calculation of the astronomical positions of the Sun, Moon, and planets.
+
+Right Ascension (HMS), Declination (DMS), Azimuth (DMS), Altitude (DMS)
+
+Algorithms by Paul Schlyter, advanced corrections. Planetary perturbations. Topocentric corrections.
+
 # Documentation
 
 How to use the API?
@@ -64,6 +72,11 @@ An URL returns all known count for each object type :
 An URL returns known count for the object type :
 `https://api.le-systeme-solaire.net/rest/knowncount/{id}`
 
+## Position of object
+
+An URL returns known count for the object type :
+`https://api.le-systeme-solaire.net/rest/positions?lon=value&lat=value&elev=value&datatime=value&zon=value`
+
 ## API parameters for /bodies
 
 |#| 	Parameter   |	Action                                          |
@@ -81,6 +94,16 @@ An URL returns known count for the object type :
 |#| 	Parameter |	Action|
 |-|---------------|-------|
 |1| 	rowData 	|Transform the objects in records.|
+
+## API parameters /positions
+
+|#| 	Parameter   |	Action                                          |
+|-|-----------------|---------------------------------------------------|
+|1| 	name        | 	Name of object.|
+|2| 	ra        | 	 	Right Ascension in hour-minute-seconde.|
+|3| 	dec        | 	 	Declination in degree-minute-seconde.|
+|4| 	az        | Azimuth in degree-minute-seconde.|
+|5| 	alt        | 	 	Altitude in degree-minute-seconde.|
 
 # License
 

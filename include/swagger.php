@@ -543,6 +543,155 @@ function swagger() {
                         }
                     }
                 }
+            },
+            "/positions": {
+                "get": {
+                    "tags": [
+                        "positions"
+                    ],
+                    "security": [
+                        {
+                            "bearerAuth": []
+                        }
+                    ],
+                    "summary": "List",
+                    "parameters": [
+                        {
+                            "name":"lat",
+                            "in":"query",
+                            "description":"Latitude for observer. From -90° to +90°.",
+                            "required":true,
+                            "schema": {
+                                "type":"number"
+                            }
+                        },
+                        {
+                            "name":"lon",
+                            "in":"query",
+                            "description":"Longitude for observer. From -180° to +180°.",
+                            "required":true,
+                            "schema": {
+                                "type":"number"
+                            }
+                        },
+                        {
+                            "name":"elev",
+                            "in":"query",
+                            "description":"Altitude for observer in meter.",
+                            "required":true,
+                            "schema": {
+                                "type":"integer"
+                            }
+                        },
+                        {
+                            "name":"datetime",
+                            "in":"query",
+                            "description":"Date UTC for observer in ISO 8601 Format (yyyy-MM-ddThh:mm:ss)",
+                            "required":true,
+                            "schema": {
+                                "type":"string"
+                            }
+                        },
+                        {
+                            "name":"zone",
+                            "in":"query",
+                            "description":"Time Zone for observer from -12 to +14",
+                            "required":true,
+                            "schema": {
+                                "type":"integer"
+                            }
+                        }
+                    ],
+                    "responses": {
+                        "200": {
+                            "description": "Position of objects",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "object",
+                                        "properties": {
+                                            "positions": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "name": {
+                                                            "type": "string"
+                                                        },
+                                                        "ra": {
+                                                            "type": "string"
+                                                        },
+                                                        "dec": {
+                                                            "type": "string"
+                                                        },
+                                                        "az": {
+                                                            "type": "string"
+                                                        },
+                                                        "alt": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "location": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "latitude": {
+                                                        "type": "number"
+                                                    },
+                                                    "longitude": {
+                                                        "type": "number"
+                                                    },
+                                                    "altitude": {
+                                                        "type": "integer"
+                                                    },
+                                                    "timezone": {
+                                                        "type": "integer"
+                                                    }
+                                                }
+                                            },
+                                            "time_info": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "calculated_for_utc": {
+                                                        "type": "string"
+                                                    },
+                                                    "local_time_display": {
+                                                        "type": "string"
+                                                    },
+                                                    "universal_time_ut": {
+                                                        "type": "string"
+                                                    },
+                                                    "universal_time_decimal": {
+                                                        "type": "number"
+                                                    },
+                                                    "julian_day": {
+                                                        "type": "number"
+                                                    },
+                                                    "day_number_j2000": {
+                                                        "type": "number"
+                                                    },
+                                                    "greenwich_sidereal_time": {
+                                                        "type": "string"
+                                                    },
+                                                    "local_sidereal_time": {
+                                                        "type": "string"
+                                                    },
+                                                    "gst_decimal": {
+                                                        "type": "number"
+                                                    },
+                                                    "lst_decimal": {
+                                                        "type": "number"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }';
