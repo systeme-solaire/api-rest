@@ -11,57 +11,7 @@
         <link rel="stylesheet" href="assets/css/bootsnav.min.css">
         <link rel="stylesheet" href="assets/css/style.min.css">
         <link rel="stylesheet" href="assets/css/responsive.min.css" />
-        <style>
-        .card {
-            background: #fff;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            width: 320px;
-            text-align: center;
-        }
-        input[type="email"], input[type="text"] {
-            width: 100%;
-            padding: 0.5rem;
-            margin: 1rem 0;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-        }
-        button {
-            padding: 0.8rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            background: #007BFF;
-            color: #fff;
-            font-size: 1rem;
-            cursor: pointer;
-        }
-        button:hover {
-            background: #0056b3;
-        }
-        .copy-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 14px;
-            font-size: 14px;
-            border: none;
-            border-radius: 6px;
-            background: #007BFF;
-            color: white;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .copy-btn:hover {
-            background: #0056b3;
-        }
-        .copy-btn .icon {
-            margin-right: 4px;
-        }
-        .main_home {
-        height: 830px;
-        }
-        </style>
+        <link rel="stylesheet" href="assets/css/apikey.css" />
         <meta property="og:title" content="Validation de la clé API de l'OpenData">
         <meta property="og:type" content="website">
         <meta property="og:url" content="https://api.le-systeme-solaire.net/register.html">
