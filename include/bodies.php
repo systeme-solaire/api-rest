@@ -336,7 +336,7 @@ class Bodies implements JsonSerializable{
                         $result .= '"isPlanet":' . ($object->getIsPlanet() == 0 ? 'false' : 'true') . '';
                         break;
                     case "moons":
-                        $result .= '"moons":'.Bodies::getSatellite($object->getId(), false, $isRelPresent, $isMoonPresent);
+                        $result .= '"moons":'.Bodies::getSatellite($object->getId(), $isRelPresent, $isMoonPresent);
                         break;
                     case "semimajorAxis":
                         $result .= '"semimajorAxis":' . ($object->getSemimajorAxis() != 0 ? $object->getSemimajorAxis() : 0) . '';
